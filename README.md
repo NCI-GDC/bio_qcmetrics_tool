@@ -1,6 +1,8 @@
 # bio_qcmetrics_tool
 Framework for serializing QC metrics into different formats for bioinformatics workflows. Currently,
-only the ability to take the metrics files and convert to sqlite is supported.
+only the ability to take the metrics files and convert to sqlite is supported. The ability to add new
+modules is simple, by just inheriting the `ExportQcModule` class and the tool is automatically
+added to the CLI.
 
 ## Install
 
