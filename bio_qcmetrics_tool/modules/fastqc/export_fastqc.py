@@ -58,8 +58,7 @@ class ExportFastqc(ExportQcModule):
                     self.parse_fastqc_data(basename, fastq_name, dfo)
 
         # Export
-        if self.options['output_sqlite']:
-            self.to_sqlite()
+        self.export()
 
     def to_sqlite(self):
         """
@@ -100,9 +99,9 @@ class ExportFastqc(ExportQcModule):
                             detail_dat[section].append(rec)
 
         self.logger.info("Writing metrics to sqlite file {0}".format(
-            self.options['output_sqlite']))
+            self.options['output']))
 
-        with sqlite3.connect(self.options['output_sqlite']) as conn:
+        with sqlite3.connect(self.options['output']) as conn:
             # Summary table
             sum_df = pd.DataFrame(sum_dat)
             table_name = 'fastqc_summary'

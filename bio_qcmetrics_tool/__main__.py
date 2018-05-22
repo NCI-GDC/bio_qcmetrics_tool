@@ -23,7 +23,7 @@ def main(args=None, extra_subparser=None):
 
     add_export_tools(main_subparsers)
 
-    options = main_parser.parse_args()
+    options = parser.parse_args()
     cls = options.func(options)
     cls.do_work()
 

@@ -1,3 +1,3 @@
 from __future__ import absolute_import
 
-from .fastqc import FastqcModule
+from .export_fastqc import ExportFastqc 

@@ -80,7 +80,6 @@ class ExportQcModule(QcModule):
             raise NotImplementedError("Not implemented")
 
     @classmethod
-    @abstractmethod
     def exporters(cls):
         """
         The available export formats.
@@ -91,9 +90,14 @@ class ExportQcModule(QcModule):
     @classmethod
     def add(cls, subparsers):
         """Adds the given subcommand to the subprsers."""
-        super().add(subparsers)
+        subparser = subparsers.add_parser(
+            name=cls.__get_name__(),
+            description=cls.__get_description__())
+
+        cls.__add_arguments__(subparser)
         subparser.add_argument('--export_format', choices=cls.exporters(),
             required=True, help='The available formats to export')
         subparser.add_argument('-o', '--output', required=True,
             help='The path to the output file')
+        subparser.set_defaults(func=cls.__from_subparser__)
         return subparser
