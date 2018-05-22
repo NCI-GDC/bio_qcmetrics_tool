@@ -91,7 +91,7 @@ class ExportQcModule(QcModule):
     def add(cls, subparsers):
         """Adds the given subcommand to the subprsers."""
         subparser = subparsers.add_parser(
-            name=cls.__get_name__(),
+            name=cls.__get_name__()[6:],
             description=cls.__get_description__())
 
         cls.__add_arguments__(subparser)
