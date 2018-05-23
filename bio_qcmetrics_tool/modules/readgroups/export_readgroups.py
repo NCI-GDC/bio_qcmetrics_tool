@@ -7,12 +7,12 @@ import sqlite3
 
 from bio_qcmetrics_tool.utils.parse import parse_type
 from bio_qcmetrics_tool.modules.base import ExportQcModule
+from bio_qcmetrics_tool.modules.exceptions import DuplicateInputException
 
 class ExportReadgroup(ExportQcModule):
     """Extract Readgroup metadata"""
     def __init__(self, options=dict()):
         super().__init__(name="readgroup", options=options)
-        self.data = dict()
 
     @classmethod
     def __add_arguments__(cls, subparser):
@@ -37,7 +37,8 @@ class ExportReadgroup(ExportQcModule):
 
         for rgfile in self.options['inputs']:
             basename = os.path.basename(rgfile)
-            assert basename not in self.data, "Duplicate input files?? {0}".format(basename)
+            if basename in self.data:
+                raise DuplicateInputException("Duplicate input files?? {0}".format(basename))
             self.logger.info("Processing {0}".format(basename))
             self.data[basename] = dict()
 

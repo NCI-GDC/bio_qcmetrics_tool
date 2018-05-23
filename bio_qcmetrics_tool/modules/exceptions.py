@@ -27,3 +27,11 @@ class ClassNotFoundException(BioQcMetricsException):
 
     def __str__(self):
         return self.message
+
+class DuplicateInputException(BioQcMetricsException):
+    """Exception thrown when a QC tool encounters duplicate inputs""" 
+    def __init__(self, message):
+        self.message = message 
+
+    def __str__(self):
+        return self.message
