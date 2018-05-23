@@ -19,18 +19,6 @@ class QualityByCycleMetrics(PicardMetric):
     def from_picard_file_instance(cls, obj):
         return cls(obj.fpath, obj._histograms[0])
 
-    def extract_metrics(self):
-        super().extract_metrics()
-        dat = {
-            'derived_from_key': self.derived_from_key,
-            'metric': None, 
-            'histogram': {
-                'colnames': self.histogram['labels'],
-                'data': self.histogram['values']
-            }
-        }
-        return dat
-
     @staticmethod
     def codec_match(obj):
         if not obj._metrics and obj._histograms:

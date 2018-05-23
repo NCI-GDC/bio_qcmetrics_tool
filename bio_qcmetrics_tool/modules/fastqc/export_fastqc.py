@@ -1,4 +1,6 @@
-"""QC Module for FastQC"""
+"""Extract metrics from raw FastQC zip archives and import into
+the sqlite db.
+"""
 import os
 import zipfile
 import pandas as pd

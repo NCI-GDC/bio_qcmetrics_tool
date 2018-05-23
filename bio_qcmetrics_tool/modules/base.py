@@ -2,9 +2,13 @@ from abc import ABCMeta, abstractmethod
 
 from bio_qcmetrics_tool.utils.logger import Logger
 
-class QcModule(metaclass=ABCMeta):
-    """Base class of all QC modules."""
+class Subcommand(metaclass=ABCMeta):
+    """Base class of all subcommands modules."""
+
     def __init__(self, name=None, options=dict(), **kwargs):
+        """
+        Initialize with the name and command-line arguments dictionary.
+        """
         self.logger = Logger.get_logger(self.__class__.__name__)
         self.name = name
         self.options = options
@@ -62,7 +66,7 @@ class QcModule(metaclass=ABCMeta):
         subparser.set_defaults(func=cls.__from_subparser__)
         return subparser
 
-class ExportQcModule(QcModule):
+class ExportQcModule(Subcommand):
 
     @abstractmethod
     def to_sqlite(self):
@@ -90,14 +94,18 @@ class ExportQcModule(QcModule):
     @classmethod
     def add(cls, subparsers):
         """Adds the given subcommand to the subprsers."""
+        # I remove the "export" from __get_name__()
         subparser = subparsers.add_parser(
-            name=cls.__get_name__()[6:],
+            name=cls.__get_name__().replace("export", ''),
             description=cls.__get_description__())
 
         cls.__add_arguments__(subparser)
+
+        # All export tool include these options
         subparser.add_argument('--export_format', choices=cls.exporters(),
             required=True, help='The available formats to export')
         subparser.add_argument('-o', '--output', required=True,
             help='The path to the output file')
+
         subparser.set_defaults(func=cls.__from_subparser__)
         return subparser

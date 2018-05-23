@@ -40,10 +40,10 @@ class ExportPicardMetrics(ExportQcModule):
             self.data[source] = {}
             self.logger.info("Processing {0}".format(source))
             picard_metrics_obj = PicardMetricsFile(picard_file)
-            self.picard[source][picard_metrics_obj.metrics.class_name] = \
+            self.data[source][picard_metrics_obj.metrics.class_name] = \
                 picard_metrics_obj.metrics.extract_metrics()
 
-        self.extract()
+        self.export()
 
     def to_sqlite(self):
         data = {}
@@ -84,7 +84,7 @@ class ExportPicardMetrics(ExportQcModule):
                             data[table].append(curr)
 
         self.logger.info("Writing metrics to sqlite file {0}".format(
-            self.options['outpute']))
+            self.options['output']))
 
         with sqlite3.connect(self.options['output']) as conn:
             for table in data:

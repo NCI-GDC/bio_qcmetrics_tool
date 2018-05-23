@@ -19,21 +19,6 @@ class RnaSeqMetrics(PicardMetric):
     def from_picard_file_instance(cls, obj):
         return cls(obj.fpath, obj._histograms[0], obj._metrics[0]['fields'], obj._metrics[0]['values'])
 
-    def extract_metrics(self):
-        super().extract_metrics()
-        dat = {
-            'derived_from_key': self.derived_from_key,
-            'metric': {
-                'colnames': self.field_names,
-                'data': self.values
-            },
-            'histogram': {
-                'colnames': self.histogram['labels'],
-                'data': self.histogram['values'] 
-            }
-        }
-        return dat
-
     @staticmethod
     def codec_match(obj):
         if obj._metrics and 'rnaseqmetrics' in obj._metrics[0]['class'].lower():
