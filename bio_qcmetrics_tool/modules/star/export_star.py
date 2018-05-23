@@ -1,4 +1,4 @@
-"""QC Module for STAR Metrics"""
+"""Export raw STAR stats into various formats"""
 import os
 import json
 import pandas as pd
@@ -65,7 +65,7 @@ class ExportStarStats(ExportQcModule):
                 self.data[source]['star_gene_counts']['bam'] = os.path.basename(bam)
 
         # Export
-        self.extract()
+        self.export()
 
     def parse_star_final_log(self, fil):
         regexes = {
@@ -159,7 +159,7 @@ class ExportStarStats(ExportQcModule):
                 # Tolerate a few errors in case there is something random added at the top of the file
                 num_errors += 1
                 if num_errors > 10 and num_genes == 0:
-                    log.warning("Error parsing {}".format(f['fn']))
+                    self.logger.warning("Error parsing {}".format(f['fn']))
                     return None
         if num_genes > 0:
             return { 'unstranded': unstranded, 'first_strand': first_strand, 'second_strand': second_strand }

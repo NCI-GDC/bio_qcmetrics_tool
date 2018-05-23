@@ -63,10 +63,10 @@ class ExportReadgroup(ExportQcModule):
                 data.append(rec)
 
         self.logger.info("Writing metrics to sqlite file {0}".format(
-            self.options['output_sqlite']))
+            self.options['output']))
 
         if data:
-            with sqlite3.connect(self.options['output_sqlite']) as conn:
+            with sqlite3.connect(self.options['output']) as conn:
                 df = pd.DataFrame(data)
                 table_name = 'readgroups'
                 df.to_sql(table_name, conn, if_exists='append')
