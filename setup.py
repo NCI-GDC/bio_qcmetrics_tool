@@ -6,7 +6,7 @@ setup(
     author_email = "khernandez@bsd.uchicago.edu",
     version = 0.1,
     description = "tools for parsing and formatting QC metrics",
-    url = "",
+    url = "https://github.com/NCI-GDC/bio_qcmetrics_tool",
     license = "Apache 2.0",
     packages = find_packages(),
     entry_points= {
