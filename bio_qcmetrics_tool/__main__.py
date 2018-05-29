@@ -1,3 +1,4 @@
+"""Main entrypoint for all modules."""
 import pkgutil
 import importlib
 import inspect
@@ -28,6 +29,9 @@ def main(args=None, extra_subparser=None):
     cls.do_work()
 
 def add_export_tools(subparsers):
+    """
+    Dynamically load all export tools.
+    """
     from bio_qcmetrics_tool.modules.base import ExportQcModule
 
     def predicate(obj):
@@ -43,7 +47,6 @@ def add_export_tools(subparsers):
             curr = importlib.import_module(p[1])
             for m in inspect.getmembers(curr, predicate):
                 m[1].add(subparsers=export_parser_sps)
-    #return subparsers
 
 if __name__ == '__main__':
     main()    

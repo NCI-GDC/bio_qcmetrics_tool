@@ -1,3 +1,4 @@
+"""Module containing base classes for all modules"""
 from abc import ABCMeta, abstractmethod
 
 from bio_qcmetrics_tool.utils.logger import Logger
@@ -67,6 +68,8 @@ class Subcommand(metaclass=ABCMeta):
         return subparser
 
 class ExportQcModule(Subcommand):
+    """Base class for CLI modules that take raw metrics files and
+    export the data into a particular format."""
 
     @abstractmethod
     def to_sqlite(self):
