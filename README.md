@@ -4,6 +4,17 @@ only the ability to take the metrics files and convert to sqlite is supported. T
 modules is simple, by just inheriting the `ExportQcModule` class and the tool is automatically
 added to the CLI.
 
+Some of the log/metrics file parsing logic was adapted from:
+
+```
+    MultiQC: Summarize analysis results for multiple tools and samples in a single report
+    Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
+    Bioinformatics (2016)
+    doi: 10.1093/bioinformatics/btw354
+    PMID: 27312411 
+    https://github.com/ewels/MultiQC
+```
+
 ## Install
 
 1. Using python3.5+, install `pip install .`
