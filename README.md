@@ -88,6 +88,75 @@ optional arguments:
                         The path to the output file
  ```
  
+ * samtools
+ 
+ **flagstats**
+ 
+ ```
+ usage: bio-qcmetrics-tool export samtoolsflagstats [-h] -i INPUTS -j JOB_UUID
+                                                   -b BAM --export_format
+                                                   {sqlite} -o OUTPUT
+
+Extract samtools flagstats metrics.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTS, --inputs INPUTS
+                        Input flagstats file. May be used one or more times
+  -j JOB_UUID, --job_uuid JOB_UUID
+                        The job uuid associated with the inputs.
+  -b BAM, --bam BAM     The bam that the metrics were derived from.
+  --export_format {sqlite}
+                        The available formats to export
+  -o OUTPUT, --output OUTPUT
+                        The path to the output file
+
+ ```
+ 
+ **idxstats**
+ 
+ ```
+ usage: bio-qcmetrics-tool export samtoolsidxstats [-h] -i INPUTS -j JOB_UUID
+                                                  -b BAM --export_format
+                                                  {sqlite} -o OUTPUT
+
+Extract samtools idxstats metrics.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTS, --inputs INPUTS
+                        Input idxstats file. May be used one or more times
+  -j JOB_UUID, --job_uuid JOB_UUID
+                        The job uuid associated with the inputs.
+  -b BAM, --bam BAM     The bam that the metrics were derived from.
+  --export_format {sqlite}
+                        The available formats to export
+  -o OUTPUT, --output OUTPUT
+                        The path to the output file
+ ```
+ 
+ **stats**
+ 
+ ```
+ usage: bio-qcmetrics-tool export samtoolsstats [-h] -i INPUT -j JOB_UUID -b
+                                               BAM --export_format {sqlite} -o
+                                               OUTPUT
+
+Extract samtools stats metrics.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Input stats file
+  -j JOB_UUID, --job_uuid JOB_UUID
+                        The job uuid associated with the inputs.
+  -b BAM, --bam BAM     The bam that the metrics were derived from.
+  --export_format {sqlite}
+                        The available formats to export
+  -o OUTPUT, --output OUTPUT
+                        The path to the output file
+ ```
+ 
  * STAR
  ```
  usage: bio-qcmetrics-tool export starstats [-h]
