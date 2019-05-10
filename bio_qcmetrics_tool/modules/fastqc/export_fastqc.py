@@ -1,5 +1,15 @@
 """Extract metrics from raw FastQC zip archives and import into
 the sqlite db.
+
+Some of the file-parsing logic is adapted from:
+
+    MultiQC: Summarize analysis results for multiple tools and samples in a single report
+    Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
+    Bioinformatics (2016)
+    doi: 10.1093/bioinformatics/btw354
+    PMID: 27312411 
+    https://github.com/ewels/MultiQC
+
 """
 import os
 import zipfile
