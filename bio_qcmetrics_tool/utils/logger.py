@@ -2,10 +2,12 @@
 import logging
 import sys
 
+
 class Logger(object):
     """Provides methods to obtain loggers."""
-    RootLogger   = logging.getLogger("gdc_qc_tool")
-    LoggerFormat = '[%(levelname)s] [%(asctime)s] [%(name)s] - %(message)s'
+
+    RootLogger = logging.getLogger("gdc_qc_tool")
+    LoggerFormat = "[%(levelname)s] [%(asctime)s] [%(name)s] - %(message)s"
 
     @classmethod
     def setup_root_logger(cls):
@@ -15,7 +17,7 @@ class Logger(object):
             Logger.RootLogger.setLevel(level=Logger.LoggerLevel)
 
         handler = logging.StreamHandler(sys.stderr)
-        formatter = logging.Formatter(Logger.LoggerFormat, datefmt='%Y%m%d %H:%M:%S')
+        formatter = logging.Formatter(Logger.LoggerFormat, datefmt="%Y%m%d %H:%M:%S")
         handler.setFormatter(formatter)
         Logger.RootLogger.addHandler(handler)
 
@@ -35,5 +37,6 @@ class Logger(object):
             handler.setFormatter(formatter)
             logger.addHandler(handler)
         return logger
+
 
 Logger.setup_root_logger()

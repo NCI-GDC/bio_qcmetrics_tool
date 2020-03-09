@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from .base import PicardMetric
 
+
 class RnaSeqMetrics(PicardMetric):
     picard_tool_name = "CollectRnaSeqMetrics"
 
@@ -12,16 +13,21 @@ class RnaSeqMetrics(PicardMetric):
             source=source,
             field_names=field_names,
             values=values,
-            histogram=histogram
+            histogram=histogram,
         )
 
     @classmethod
     def from_picard_file_instance(cls, obj):
-        return cls(obj.fpath, obj._histograms[0], obj._metrics[0]['fields'], obj._metrics[0]['values'])
+        return cls(
+            obj.fpath,
+            obj._histograms[0],
+            obj._metrics[0]["fields"],
+            obj._metrics[0]["values"],
+        )
 
     @staticmethod
     def codec_match(obj):
-        if obj._metrics and 'rnaseqmetrics' in obj._metrics[0]['class'].lower():
+        if obj._metrics and "rnaseqmetrics" in obj._metrics[0]["class"].lower():
             return True
         else:
             return False
