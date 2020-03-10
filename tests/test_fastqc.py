@@ -1,10 +1,12 @@
 """Tests for `bio_qcmetrics_tool.modules.fastqc`"""
 import unittest
 import attr
+import tempfile
+import sqlite3
 
 from bio_qcmetrics_tool.modules.fastqc import ExportFastqc
 
-from utils import captured_output
+from utils import captured_output, get_test_data_path, get_table_list, cleanup_files
 
 
 @attr.s
@@ -19,6 +21,8 @@ class MockZipFile(object):
 
 
 class TestExportFastqc(unittest.TestCase):
+    _to_remove = []
+
     def test_init(self):
         opts = {}
         cls = ExportFastqc(options=opts)
@@ -157,3 +161,31 @@ class TestExportFastqc(unittest.TestCase):
             }
         }
         self.assertEqual(obj.data, exp_dict)
+
+    def test_do_work(self):
+        expected_tables = set([
+            "fastqc_data_Adapter_Content",
+            "fastqc_data_Basic_Statistics",            
+            "fastqc_data_Kmer_Content",                
+            "fastqc_data_Per_base_N_content",          
+            "fastqc_data_Per_base_sequence_content",   
+            "fastqc_data_Per_base_sequence_quality",   
+            "fastqc_data_Per_sequence_GC_content",     
+            "fastqc_data_Per_sequence_quality_scores", 
+            "fastqc_data_Per_tile_sequence_quality",   
+            "fastqc_data_Sequence_Duplication_Levels", 
+            "fastqc_data_Sequence_Length_Distribution",
+            "fastqc_summary"])
+        fqc_zip = get_test_data_path('SRR1067505_1_fastqc.zip')
+        (fd, fn) = tempfile.mkstemp()
+        try:
+            opts = {"inputs": [fqc_zip], "job_uuid": "fakeuuid", "output": fn, "export_format": "sqlite"}
+            obj = ExportFastqc(options=opts)
+            with captured_output() as (_, _):
+                obj.do_work()
+            with sqlite3.connect(fn) as conn:
+                cur = conn.cursor()
+                res = set(get_table_list(cur))
+                self.assertEqual(res, expected_tables)
+        finally:
+            cleanup_files(fn)
