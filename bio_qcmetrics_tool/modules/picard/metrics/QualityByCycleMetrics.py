@@ -6,7 +6,7 @@ from .base import PicardMetric
 class QualityByCycleMetrics(PicardMetric):
     picard_tool_name = "CollectQualityByCycleMetrics"
 
-    def __init__(self, source, histogram, field_names=[], values=[]):
+    def __init__(self, source, histogram, field_names=None, values=None):
         super().__init__(
             class_name="QualityByCycleMetrics",
             source=source,

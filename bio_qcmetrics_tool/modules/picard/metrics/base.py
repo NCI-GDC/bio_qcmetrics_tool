@@ -25,8 +25,8 @@ class PicardMetric(metaclass=ABCMeta):
         source=None,
         histogram=None,
         derived_from_key=None,
-        field_names=[],
-        values=[],
+        field_names=None,
+        values=None,
     ):
         """
         Initialze a PicardMetric object.
@@ -46,8 +46,8 @@ class PicardMetric(metaclass=ABCMeta):
         self.logger = Logger.get_logger(self.__class__.__name__)
         self.class_name = class_name
         self.source = source
-        self.field_names = field_names
-        self.values = values
+        self.field_names = [] if field_names is None else field_names
+        self.values = [] if values is None else values
         self.histogram = histogram
         self.derived_from_key = derived_from_key
 

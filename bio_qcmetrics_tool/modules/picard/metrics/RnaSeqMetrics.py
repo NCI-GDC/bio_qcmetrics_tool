@@ -6,7 +6,7 @@ from .base import PicardMetric
 class RnaSeqMetrics(PicardMetric):
     picard_tool_name = "CollectRnaSeqMetrics"
 
-    def __init__(self, source, histogram, field_names=[], values=[]):
+    def __init__(self, source, histogram, field_names=None, values=None):
         super().__init__(
             class_name="RnaSeqMetrics",
             derived_from_key="bam",
