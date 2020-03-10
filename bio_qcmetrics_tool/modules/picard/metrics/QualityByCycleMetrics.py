@@ -13,7 +13,7 @@ class QualityByCycleMetrics(PicardMetric):
             field_names=field_names,
             values=values,
             derived_from_key="bam",
-            histogram=histrogram,
+            histogram=histogram,
         )
 
     @classmethod
