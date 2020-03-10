@@ -15,7 +15,7 @@ class PicardMetricsFile:
     HISTO_HEADER = "## HISTOGRAM\t"
     METRIC_HEADER = "## METRICS CLASS\t"
 
-    def __init__(self, fpath, tool=None, headers=[], metrics=None):
+    def __init__(self, fpath, tool=None, headers=None, metrics=None):
         """
         Initialize with the path to Picard metrics file. The slots of this
         class include:
@@ -35,7 +35,7 @@ class PicardMetricsFile:
         self.fpath = fpath
         self.tool = tool
 
-        self.headers = []
+        self.headers = [] if headers is None else headers
         self.metrics = metrics
 
         # Private list of dicts containing parsed metrics lines.
