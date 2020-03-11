@@ -1,0 +1,17 @@
+language: python
+
+python:
+  - "3.6.9"
+  - "3.5.2"
+
+before_install:
+  - pip freeze
+
+install:
+  - pip install -r test-requirements.txt
+  - python setup.py install
+
+before_script:
+  - pip freeze
+
+script: "python -m unittest discover -vs tests/"
