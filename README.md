@@ -182,3 +182,8 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         The path to the output file
  ```
+
+## Adding new exporters
+
+All new exporter tools should inherit from `bio_qcmetrics_tool.modules.base.ExportQcModule`. All exporters will
+automatically have `--export_format` and `--output` command-line parameters added.
