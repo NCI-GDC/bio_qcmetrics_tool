@@ -163,23 +163,31 @@ class TestExportFastqc(unittest.TestCase):
         self.assertEqual(obj.data, exp_dict)
 
     def test_do_work(self):
-        expected_tables = set([
-            "fastqc_data_Adapter_Content",
-            "fastqc_data_Basic_Statistics",            
-            "fastqc_data_Kmer_Content",                
-            "fastqc_data_Per_base_N_content",          
-            "fastqc_data_Per_base_sequence_content",   
-            "fastqc_data_Per_base_sequence_quality",   
-            "fastqc_data_Per_sequence_GC_content",     
-            "fastqc_data_Per_sequence_quality_scores", 
-            "fastqc_data_Per_tile_sequence_quality",   
-            "fastqc_data_Sequence_Duplication_Levels", 
-            "fastqc_data_Sequence_Length_Distribution",
-            "fastqc_summary"])
-        fqc_zip = get_test_data_path('SRR1067505_1_fastqc.zip')
+        expected_tables = set(
+            [
+                "fastqc_data_Adapter_Content",
+                "fastqc_data_Basic_Statistics",
+                "fastqc_data_Kmer_Content",
+                "fastqc_data_Per_base_N_content",
+                "fastqc_data_Per_base_sequence_content",
+                "fastqc_data_Per_base_sequence_quality",
+                "fastqc_data_Per_sequence_GC_content",
+                "fastqc_data_Per_sequence_quality_scores",
+                "fastqc_data_Per_tile_sequence_quality",
+                "fastqc_data_Sequence_Duplication_Levels",
+                "fastqc_data_Sequence_Length_Distribution",
+                "fastqc_summary",
+            ]
+        )
+        fqc_zip = get_test_data_path("SRR1067505_1_fastqc.zip")
         (fd, fn) = tempfile.mkstemp()
         try:
-            opts = {"inputs": [fqc_zip], "job_uuid": "fakeuuid", "output": fn, "export_format": "sqlite"}
+            opts = {
+                "inputs": [fqc_zip],
+                "job_uuid": "fakeuuid",
+                "output": fn,
+                "export_format": "sqlite",
+            }
             obj = ExportFastqc(options=opts)
             with captured_output() as (_, _):
                 obj.do_work()

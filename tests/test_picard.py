@@ -5,22 +5,28 @@ import sqlite3
 import os
 
 from bio_qcmetrics_tool.modules.picard import ExportPicardMetrics
-from bio_qcmetrics_tool.modules.picard.codec import PicardMetricsFile 
-from bio_qcmetrics_tool.modules.picard.metrics.base import PICARD_METRICS_OBJECTS, PicardMetric
+from bio_qcmetrics_tool.modules.picard.codec import PicardMetricsFile
+from bio_qcmetrics_tool.modules.picard.metrics.base import (
+    PICARD_METRICS_OBJECTS,
+    PicardMetric,
+)
 
 from utils import captured_output, get_test_data_path, get_table_list, cleanup_files
 
 
 class TestPicardMetricsFile(unittest.TestCase):
     def test_init(self):
-        cls = PicardMetricsFile('/path/fake.txt', headers=['fake'])
+        cls = PicardMetricsFile("/path/fake.txt", headers=["fake"])
         self.assertEqual(cls.fpath, "/path/fake.txt")
         self.assertIsNone(cls.tool)
-        self.assertEqual(cls.headers, ['fake'])
+        self.assertEqual(cls.headers, ["fake"])
         self.assertIsNone(cls.metrics)
 
     def test_parsing(self):
-        from bio_qcmetrics_tool.modules.picard.metrics.RnaSeqMetrics import RnaSeqMetrics
+        from bio_qcmetrics_tool.modules.picard.metrics.RnaSeqMetrics import (
+            RnaSeqMetrics,
+        )
+
         ifil = get_test_data_path("CTC-1-AA-B2.star.bam.rnaseqmetrics.txt")
         obj = PicardMetricsFile(ifil)
         self.assertTrue(isinstance(obj.metrics, RnaSeqMetrics))
@@ -39,7 +45,7 @@ class TestPicardMetric(unittest.TestCase):
                 values=values,
                 histogram=histogram,
             )
-            
+
         @classmethod
         def from_picard_file_instance(cls, obj):
             pass
@@ -47,14 +53,16 @@ class TestPicardMetric(unittest.TestCase):
         @staticmethod
         def codec_match(some_bool):
             return some_bool
- 
+
     def test_picard_metrics_objects_list(self):
-        self.assertTrue(all([issubclass(i, PicardMetric) for i in PICARD_METRICS_OBJECTS]))
+        self.assertTrue(
+            all([issubclass(i, PicardMetric) for i in PICARD_METRICS_OBJECTS])
+        )
 
     def test_init(self):
-        obj = TestPicardMetric.ExampleMetrics('src', None)
+        obj = TestPicardMetric.ExampleMetrics("src", None)
         self.assertEqual(obj.class_name, "ExampleMetrics")
-        self.assertEqual(obj.source, 'src')
+        self.assertEqual(obj.source, "src")
         self.assertEqual(obj.field_names, [])
         self.assertEqual(obj.values, [])
         self.assertIsNone(obj.histogram)
@@ -63,6 +71,7 @@ class TestPicardMetric(unittest.TestCase):
     def test_codec_match(self):
         self.assertTrue(TestPicardMetric.ExampleMetrics.codec_match(True))
         self.assertFalse(TestPicardMetric.ExampleMetrics.codec_match(False))
+
 
 class TestExportPicardMetrics(unittest.TestCase):
     def test_init(self):
@@ -79,7 +88,7 @@ class TestExportPicardMetrics(unittest.TestCase):
             "export_format": "sqlite",
             "output": fn,
             "derived_from_file": "bam",
-            "job_uuid": jid 
+            "job_uuid": jid,
         }
         try:
             obj = ExportPicardMetrics(options=opts)
@@ -103,7 +112,7 @@ class TestConcreteMetrics(unittest.TestCase):
             "export_format": "sqlite",
             "output": fn,
             "derived_from_file": "bam",
-            "job_uuid": jid 
+            "job_uuid": jid,
         }
         exp_tables = set(["picard_RnaSeqMetrics", "picard_RnaSeqMetrics_histogram"])
         try:
@@ -111,21 +120,23 @@ class TestConcreteMetrics(unittest.TestCase):
             obj.do_work()
             with sqlite3.connect(fn) as conn:
                 cur = conn.cursor()
-                tbls = set(get_table_list(cur)) 
+                tbls = set(get_table_list(cur))
                 self.assertEqual(tbls, exp_tables)
         finally:
             cleanup_files(fn)
 
     def test_quality_by_cycle(self):
         (fd, fn) = tempfile.mkstemp()
-        ifil = get_test_data_path("A1.sorted.dup.recal.all.metrics.quality_by_cycle_metrics")
+        ifil = get_test_data_path(
+            "A1.sorted.dup.recal.all.metrics.quality_by_cycle_metrics"
+        )
         jid = "fakeuuid"
         opts = {
             "inputs": [ifil],
             "export_format": "sqlite",
             "output": fn,
             "derived_from_file": "bam",
-            "job_uuid": jid 
+            "job_uuid": jid,
         }
         exp_tables = set(["picard_QualityByCycleMetrics_histogram"])
         try:
@@ -133,21 +144,23 @@ class TestConcreteMetrics(unittest.TestCase):
             obj.do_work()
             with sqlite3.connect(fn) as conn:
                 cur = conn.cursor()
-                tbls = set(get_table_list(cur)) 
+                tbls = set(get_table_list(cur))
                 self.assertEqual(tbls, exp_tables)
         finally:
             cleanup_files(fn)
 
     def test_quality_distribution(self):
         (fd, fn) = tempfile.mkstemp()
-        ifil = get_test_data_path("A1.sorted.dup.recal.all.metrics.quality_distribution_metrics")
+        ifil = get_test_data_path(
+            "A1.sorted.dup.recal.all.metrics.quality_distribution_metrics"
+        )
         jid = "fakeuuid"
         opts = {
             "inputs": [ifil],
             "export_format": "sqlite",
             "output": fn,
             "derived_from_file": "bam",
-            "job_uuid": jid 
+            "job_uuid": jid,
         }
         exp_tables = set(["picard_QualityDistributionMetrics_histogram"])
         try:
@@ -155,7 +168,7 @@ class TestConcreteMetrics(unittest.TestCase):
             obj.do_work()
             with sqlite3.connect(fn) as conn:
                 cur = conn.cursor()
-                tbls = set(get_table_list(cur)) 
+                tbls = set(get_table_list(cur))
                 self.assertEqual(tbls, exp_tables)
         finally:
             cleanup_files(fn)

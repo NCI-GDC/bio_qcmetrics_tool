@@ -16,14 +16,14 @@ class TestExportReadgroup(unittest.TestCase):
 
     def test_do_work(self):
         (fd, fn) = tempfile.mkstemp()
-        ifil = get_test_data_path("readgroups.json") 
+        ifil = get_test_data_path("readgroups.json")
         jid = "fakeuuid"
         opts = {
             "inputs": [ifil],
             "export_format": "sqlite",
             "output": fn,
             "bam": "fake.bam",
-            "job_uuid": jid
+            "job_uuid": jid,
         }
         exp_tables = set(["readgroups"])
         try:
@@ -32,7 +32,6 @@ class TestExportReadgroup(unittest.TestCase):
             with sqlite3.connect(fn) as conn:
                 cur = conn.cursor()
                 tables = set(get_table_list(cur))
-                self.assertEqual(tables, exp_tables) 
+                self.assertEqual(tables, exp_tables)
         finally:
-            cleanup_files(fn) 
-        
+            cleanup_files(fn)
