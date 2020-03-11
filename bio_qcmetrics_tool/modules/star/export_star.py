@@ -209,26 +209,27 @@ class ExportStarStats(ExportQcModule):
         second_strand = {"N_genes": 0}
         num_errors = 0
         num_genes = 0
-        for l in open(f, "rt"):
-            s = l.split("\t")
-            try:
-                for i in [1, 2, 3]:
-                    s[i] = int(s[i])
-                if s[0] in keys:
-                    unstranded[s[0]] = s[1]
-                    first_strand[s[0]] = s[2]
-                    second_strand[s[0]] = s[3]
-                else:
-                    unstranded["N_genes"] += s[1]
-                    first_strand["N_genes"] += s[2]
-                    second_strand["N_genes"] += s[3]
-                    num_genes += 1
-            except IndexError:
-                # Tolerate a few errors in case there is something random added at the top of the file
-                num_errors += 1
-                if num_errors > 10 and num_genes == 0:
-                    self.logger.warning("Error parsing {}".format(f["fn"]))
-                    return None
+        with open(f, "rt") as fh:
+            for l in fh: 
+                s = l.split("\t")
+                try:
+                    for i in [1, 2, 3]:
+                        s[i] = int(s[i])
+                    if s[0] in keys:
+                        unstranded[s[0]] = s[1]
+                        first_strand[s[0]] = s[2]
+                        second_strand[s[0]] = s[3]
+                    else:
+                        unstranded["N_genes"] += s[1]
+                        first_strand["N_genes"] += s[2]
+                        second_strand["N_genes"] += s[3]
+                        num_genes += 1
+                except IndexError:
+                    # Tolerate a few errors in case there is something random added at the top of the file
+                    num_errors += 1
+                    if num_errors > 10 and num_genes == 0:
+                        self.logger.warning("Error parsing {}".format(f["fn"]))
+                        return None
         if num_genes > 0:
             return {
                 "unstranded": unstranded,
