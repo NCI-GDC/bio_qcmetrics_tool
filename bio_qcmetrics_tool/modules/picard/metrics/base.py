@@ -10,6 +10,7 @@ from bio_qcmetrics_tool.utils.logger import Logger
 
 PICARD_METRICS_OBJECTS = []
 
+
 class PicardMetric(metaclass=ABCMeta):
     """
     Base class for all Picard metrics objects. These objects act as a
@@ -18,8 +19,15 @@ class PicardMetric(metaclass=ABCMeta):
     object matches a particular metric.
     """
 
-    def __init__(self, class_name=None, source=None, histogram=None, 
-                 derived_from_key=None, field_names=[], values=[]):
+    def __init__(
+        self,
+        class_name=None,
+        source=None,
+        histogram=None,
+        derived_from_key=None,
+        field_names=None,
+        values=None,
+    ):
         """
         Initialze a PicardMetric object.
 
@@ -38,9 +46,9 @@ class PicardMetric(metaclass=ABCMeta):
         self.logger = Logger.get_logger(self.__class__.__name__)
         self.class_name = class_name
         self.source = source
-        self.field_names = field_names
-        self.values = values
-        self.histogram = histogram 
+        self.field_names = [] if field_names is None else field_names
+        self.values = [] if values is None else values
+        self.histogram = histogram
         self.derived_from_key = derived_from_key
 
     @classmethod
@@ -54,28 +62,25 @@ class PicardMetric(metaclass=ABCMeta):
         """
         Entry point to get formatted metrics results.
         """
-        self.logger.info('{0} - {1}'.format(
-            self.__class__.__name__,
-            self.source))
+        self.logger.info("{0} - {1}".format(self.__class__.__name__, self.source))
         dat = {
-            'derived_from_key': self.derived_from_key,
-            'metric': None if not self.field_names and not self.values \
-                else {
-                    'colnames': self.field_names,
-                    'data': self.values
-                },
-            'histogram': None if self.histogram is None \
-                else {
-                    'colnames': self.histogram['labels'], 
-                    'data': self.histogram['values']
-                }
+            "derived_from_key": self.derived_from_key,
+            "metric": None
+            if not self.field_names and not self.values
+            else {"colnames": self.field_names, "data": self.values},
+            "histogram": None
+            if self.histogram is None
+            else {
+                "colnames": self.histogram["labels"],
+                "data": self.histogram["values"],
+            },
         }
         return dat
 
     def add_field_names(self, fields):
         if isinstance(fields, list):
             self.field_names.extend(fields)
-        else: 
+        else:
             self.field_names.append(fields)
 
     def add_value_row(self, row):
@@ -90,19 +95,21 @@ class PicardMetric(metaclass=ABCMeta):
         metrics file object matches this class.
         """
         raise NotImplementedError("Not implemented!")
-    
-if not PICARD_METRICS_OBJECTS:
-    def predicate(obj):
-        return inspect.isclass(obj) and issubclass(obj, PicardMetric) 
 
-    mod = sys.modules["bio_qcmetrics_tool.modules.picard.metrics"] 
-    for p in pkgutil.iter_modules(mod.__path__, mod.__name__ + '.'):
-        if p[1] != 'bio_qcmetrics_tool.modules.picard.metrics.base':
+
+if not PICARD_METRICS_OBJECTS:
+
+    def predicate(obj):
+        return inspect.isclass(obj) and issubclass(obj, PicardMetric)
+
+    mod = sys.modules["bio_qcmetrics_tool.modules.picard.metrics"]
+    for p in pkgutil.iter_modules(mod.__path__, mod.__name__ + "."):
+        if p[1] != "bio_qcmetrics_tool.modules.picard.metrics.base":
             try:
                 curr = sys.modules[p[1]]
             except KeyError:
                 curr = importlib.import_module(p[1])
 
             for m in inspect.getmembers(curr, predicate):
-                if m[0] != 'PicardMetric':
+                if m[0] != "PicardMetric":
                     PICARD_METRICS_OBJECTS.append(m[1])

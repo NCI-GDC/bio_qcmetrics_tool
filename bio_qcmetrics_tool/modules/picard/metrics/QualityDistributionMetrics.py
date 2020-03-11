@@ -2,17 +2,18 @@ from __future__ import absolute_import
 
 from .base import PicardMetric
 
+
 class QualityDistributionMetrics(PicardMetric):
     picard_tool_name = "CollectQualityDistributionMetrics"
 
-    def __init__(self, source, histogram, field_names=[], values=[]):
+    def __init__(self, source, histogram, field_names=None, values=None):
         super().__init__(
             class_name="QualityDistributionMetrics",
             source=source,
             field_names=field_names,
             values=values,
-            derived_from_key='bam',
-            histogram=histogram
+            derived_from_key="bam",
+            histogram=histogram,
         )
 
     @classmethod
@@ -22,7 +23,10 @@ class QualityDistributionMetrics(PicardMetric):
     @staticmethod
     def codec_match(obj):
         if not obj._metrics and obj._histograms:
-            if obj._histograms[0]['bin'] == 'QUALITY' and obj._histograms[0]['labels'][1] == 'COUNT_OF_Q':
+            if (
+                obj._histograms[0]["bin"] == "QUALITY"
+                and obj._histograms[0]["labels"][1] == "COUNT_OF_Q"
+            ):
                 return True
         return False
 
