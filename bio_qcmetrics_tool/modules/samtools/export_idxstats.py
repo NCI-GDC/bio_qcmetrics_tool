@@ -115,7 +115,6 @@ class ExportSamtoolsIdxstats(ExportQcModule):
         """
         parsed_data = []
         for line in fh:
-            chrom, length, aligned, unaligned = line.rstrip("\r\n").split("\t")
             cols = line.rstrip("\r\n").split("\t")
             if len(cols) != 4:
                 raise ParserException(
