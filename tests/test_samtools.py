@@ -4,7 +4,11 @@ import tempfile
 import sqlite3
 import math
 
-from bio_qcmetrics_tool.modules.samtools import ExportSamtoolsFlagstats, ExportSamtoolsIdxstats, ExportSamtoolsStats
+from bio_qcmetrics_tool.modules.samtools import (
+    ExportSamtoolsFlagstats,
+    ExportSamtoolsIdxstats,
+    ExportSamtoolsStats,
+)
 from bio_qcmetrics_tool.modules.exceptions import ParserException
 
 from utils import get_test_data_path, get_table_list, cleanup_files
@@ -93,6 +97,7 @@ class TestExportSamtoolsFlagstats(unittest.TestCase):
         finally:
             cleanup_files(fn)
 
+
 class TestExportSamtoolsIdxstats(unittest.TestCase):
     def test_init(self):
         opts = {}
@@ -101,22 +106,16 @@ class TestExportSamtoolsIdxstats(unittest.TestCase):
 
     def test__parse(self):
         obj = ExportSamtoolsIdxstats(options={})
-        lines = [
-            "1\t100\t100\t5",
-            "2\t300\t10\t1"
-        ] 
+        lines = ["1\t100\t100\t5", "2\t300\t10\t1"]
         exp = []
         for line in lines:
-            curr = line.split('\t')
+            curr = line.split("\t")
             curr = [curr[0]] + list(map(int, curr[1:]))
             exp.append(curr)
         res = obj._parse(lines)
-        self.assertEqual(res, exp) 
+        self.assertEqual(res, exp)
 
-        lines = [
-            "1\t100\t100\t5",
-            "2\t300\t10\t1\t432423"
-        ] 
+        lines = ["1\t100\t100\t5", "2\t300\t10\t1\t432423"]
         with self.assertRaises(ParserException):
             res = obj._parse(lines)
 
@@ -142,6 +141,7 @@ class TestExportSamtoolsIdxstats(unittest.TestCase):
         finally:
             cleanup_files(fn)
 
+
 class TestExportExportSamtoolsStats(unittest.TestCase):
     def test_init(self):
         opts = {}
@@ -155,14 +155,16 @@ class TestExportExportSamtoolsStats(unittest.TestCase):
             "SN\titem 1:\t1000",
             "SN\titem 2 (text):\t50",
             "SN\titem 3:\t100.2\t#some comment",
-        ] 
-        exp = {'item_1': 1000, 'item_2_text': 50, 'item_3': 100.2}
+        ]
+        exp = {"item_1": 1000, "item_2_text": 50, "item_3": 100.2}
         res = obj._parse_stats(lines)
         self.assertEqual(res, exp)
 
     def test_do_work(self):
         (fd, fn) = tempfile.mkstemp()
-        ifil = get_test_data_path("SRR1067503_1.fastq.gz_bowtie_srtd.bam_dedup.bam_samtools_stats.txt")
+        ifil = get_test_data_path(
+            "SRR1067503_1.fastq.gz_bowtie_srtd.bam_dedup.bam_samtools_stats.txt"
+        )
         jid = "fakeuuid"
         opts = {
             "input": ifil,
