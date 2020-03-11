@@ -210,7 +210,7 @@ class ExportStarStats(ExportQcModule):
         num_errors = 0
         num_genes = 0
         with open(f, "rt") as fh:
-            for l in fh: 
+            for l in fh:
                 s = l.split("\t")
                 try:
                     for i in [1, 2, 3]:
