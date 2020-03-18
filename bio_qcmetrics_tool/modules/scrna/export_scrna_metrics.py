@@ -62,32 +62,32 @@ class ExportSamtoolsFlagstats(ExportQcModule):
         super().do_work()
 
         self.logger.info(
-            "Processing {0} 10x metrics files...".format(len(self.options["inputs"]))
+            "Processing {0} flagstat files...".format(len(self.options["inputs"]))
         )
 
-        for metricsfile in self.options["inputs"]:
-            basename = os.path.basename(metricsfile)
+        for scrnametricsfile in self.options["inputs"]:
+            basename = os.path.basename(scrnametricsfile)
             if basename in self.data:
                 raise DuplicateInputException(
                     "Duplicate input files?? {0}".format(basename)
                 )
             self.logger.info("Processing {0}".format(basename))
             self.data[basename] = dict()
-            rfunc = get_read_func(flagfile)
-            fsize = os.stat(flagfile).st_size
+            rfunc = get_read_func(scrnametricsfile)
+            fsize = os.stat(scrnametricsfile).st_size
             if fsize > 5000:
                 raise ParserException(
-                    "Input file size '{0}' is larger than expected! Are you sure this is a metricsfile file?".format(
+                    "Input file size '{0}' is larger than expected! Are you sure this is a flagstats file?".format(
                         fsize
                     )
                 )
 
-            with rfunc(flagfile, "rt") as fh:
+            with rfunc(scrnametricsfile, "rt") as fh:
                 fdat = fh.read()
-                self.data[basename]["metrics"] = {
+                self.data[basename]["10x_scrna_metrics"] = {
                     "bam": os.path.basename(self.options["bam"]),
                     "job_uuid": self.options["job_uuid"],
-                    "data": self._parse_flagstat(fdat),
+                    "data": self._parse_scrnametrics(fdat),
                 }
 
         # Export data
@@ -103,8 +103,7 @@ class ExportSamtoolsFlagstats(ExportQcModule):
                     "bam": record["bam"],
                     "flagstat_file": source,
                     "category": section,
-                    "n_passed": record["data"][section].get("passed"),
-                    "n_failed": record["data"][section].get("failed"),
+
                 }
                 data.append(curr)
 
@@ -118,7 +117,7 @@ class ExportSamtoolsFlagstats(ExportQcModule):
                 table_name = "10x_scrna_metrics"
                 df.to_sql(table_name, conn, if_exists="append")
 
-    def _parse_flagstat(self, fh):
+    def _parse_scrnametrics(self, fh):
         """
         Parse the 10x metrics data from the loaded file data
         """
@@ -146,20 +145,10 @@ class ExportSamtoolsFlagstats(ExportQcModule):
             "Median UMI Counts per Cell": r"(\d+) \+ (\d+) Median UMI Counts per Cell",
         }
 
-        re_groups = ["passed", "failed", "passed_pct", "failed_pct"]
         for key, reg in scrna_regexes.items():
             res = re.search(reg, fh, re.MULTILINE)
             if res:
                 if key not in parsed_data:
                     parsed_data[key] = dict()
-                for i, j in enumerate(re_groups):
-                    try:
-                        val = res.group(i + 1).strip("% ")
-                        val = float(val) if ("." in val) else int(val)
-                        parsed_data[key][j] = val
-                    except IndexError:
-                        pass  # Not all regexes have percentages
-                    except ValueError:
-                        parsed_data[key][j] = float("nan")
 
         return parsed_data
