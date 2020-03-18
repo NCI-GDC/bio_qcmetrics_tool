@@ -23,7 +23,7 @@ from bio_qcmetrics_tool.modules.exceptions import (
 )
 
 
-class ExportSamtoolsFlagstats(ExportQcModule):
+class ExportTenXScrnaMetrics(ExportQcModule):
     """Extract 10x scrna metrics"""
 
     def __init__(self, options=dict()):
