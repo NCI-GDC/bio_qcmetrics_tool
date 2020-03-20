@@ -99,7 +99,7 @@ class ExportTenXScrnaMetrics(ExportQcModule):
                 curr = {
                     "job_uuid": record["job_uuid"],
                     "bam": record["bam"],
-                    "flagstat_file": source,
+                    "metrics_file": source,
                     "category": section,
 
                 }
