@@ -14,6 +14,7 @@ import os
 import re
 import pandas as pd
 import sqlite3
+import csv
 
 from bio_qcmetrics_tool.utils.parse import parse_type, get_read_func
 from bio_qcmetrics_tool.modules.base import ExportQcModule
@@ -62,7 +63,7 @@ class ExportTenXScrnaMetrics(ExportQcModule):
         super().do_work()
 
         self.logger.info(
-            "Processing {0} flagstat files...".format(len(self.options["inputs"]))
+            "Processing {0} 10x scrna metrics files...".format(len(self.options["inputs"]))
         )
 
         for scrnametricsfile in self.options["inputs"]:
@@ -73,21 +74,18 @@ class ExportTenXScrnaMetrics(ExportQcModule):
                 )
             self.logger.info("Processing {0}".format(basename))
             self.data[basename] = dict()
-            rfunc = get_read_func(scrnametricsfile)
             fsize = os.stat(scrnametricsfile).st_size
             if fsize > 5000:
                 raise ParserException(
-                    "Input file size '{0}' is larger than expected! Are you sure this is a flagstats file?".format(
+                    "Input file size '{0}' is larger than expected! Are you sure this is a 10x scrna metrics file?".format(
                         fsize
                     )
                 )
 
-            with rfunc(scrnametricsfile, "rt") as fh:
-                fdat = fh.read()
-                self.data[basename]["10x_scrna_metrics"] = {
-                    "bam": os.path.basename(self.options["bam"]),
-                    "job_uuid": self.options["job_uuid"],
-                    "data": self._parse_scrnametrics(fdat),
+            self.data[basename]["10x_scrna_metrics"] = {
+                "bam": os.path.basename(self.options["bam"]),
+                "job_uuid": self.options["job_uuid"],
+                "data": self._parse_scrnametrics(),
                 }
 
         # Export data
@@ -121,34 +119,11 @@ class ExportTenXScrnaMetrics(ExportQcModule):
         """
         Parse the 10x metrics data from the loaded file data
         """
-        parsed_data = {}
-        scrna_regexes = {
-            "Estimated Number of Cells": r"(\d+) \+ (\d+) Estimated Number of Cells",
-            "Mean Reads per Cell": r"(\d+) \+ (\d+) Mean Reads per Cell",
-            "Median Genes per Cell": r"(\d+) \+ (\d+) Median Genes per Cell",
-            "Number of Reads": r"(\d+) \+ (\d+) Number of Reads",
-            "Valid Barcodes": r"(\d+) \+ (\d+) Valid Barcodes",
-            "Sequencing Saturation": r"(\d+) \+ (\d+) Sequencing Saturation",
-            "Q30 Bases in Barcode": r"(\d+) \+ (\d+) Q30 Bases in Barcode",
-            "Q30 Bases in RNA Read": r"(\d+) \+ (\d+) Q30 Bases in RNA Read",
-            "Q30 Bases in Sample Index": r"(\d+) \+ (\d+) Q30 Bases in Sample Index",
-            "Q30 Bases in UMI": r"(\d+) \+ (\d+) Q30 Bases in UMI",
-            "Reads Mapped to Genome": r"(\d+) \+ (\d+) Reads Mapped to Genome",
-            "Reads Mapped Confidently to Genome": r"(\d+) \+ (\d+) Reads Mapped Confidently to Genome",
-            "Reads Mapped Confidently to Intergenic Regions": r"(\d+) \+ (\d+) Reads Mapped Confidently to Intergenic Regions",
-            "Reads Mapped Confidently to Intronic Regions": r"(\d+) \+ (\d+) Reads Mapped Confidently to Intronic Regions",
-            "Reads Mapped Confidently to Exonic Regions": r"(\d+) \+ (\d+) Reads Mapped Confidently to Exonic Regions",
-            "Reads Mapped Confidently to Transcriptome": r"(\d+) \+ (\d+) Reads Mapped Confidently to Transcriptome",
-            "Reads Mapped Antisense to Gene": r"(\d+) \+ (\d+) Reads Mapped Antisense to Gene",
-            "Fraction Reads in Cells": r"(\d+) \+ (\d+) Fraction Reads in Cells",
-            "Total Genes Detected": r"(\d+) \+ (\d+) Total Genes Detected",
-            "Median UMI Counts per Cell": r"(\d+) \+ (\d+) Median UMI Counts per Cell",
-        }
-
-        for key, reg in scrna_regexes.items():
-            res = re.search(reg, fh, re.MULTILINE)
-            if res:
-                if key not in parsed_data:
-                    parsed_data[key] = dict()
-
+        with open(scrnametricsfile, 'r') as csvfile:
+          readcsv = list(csv.reader(csvfile))
+          header = readcsv[0]
+          headerfix = [item.replace(" ","_") for item in header]
+          values = readcsv[1]
+          metrics_dict = dict(zip(headerfix, values))
+          parsed_data = pd.DataFrame(metrics_dict.items())
         return parsed_data
