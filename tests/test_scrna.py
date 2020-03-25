@@ -13,7 +13,7 @@ from utils import get_test_data_path, get_table_list, cleanup_files
 
 class TestExportScrnaMetrics(unittest.TestCase):
     def gen_results(self):
-        return { pd.DataFrame(pd.DataFrame({'Estimated_Number_of_Cells':['5,032'],
+        return {'Estimated_Number_of_Cells':['5,032'],
         'Mean_Reads_per_Cell':['76,300'],
         'Median_Genes_per_Cell':['2,214'],
         'Number_of_Reads':['383,941,607'],
@@ -32,7 +32,7 @@ class TestExportScrnaMetrics(unittest.TestCase):
         'Reads_Mapped_Antisense_to_Gene':['1.2%'],
         'Fraction_Reads_in_Cells':['94.1%'],
         'Total_Genes_Detected':['28,162'],
-        'Median_UMI_Counts_per_Cell':['7,805']})),
+        'Median_UMI_Counts_per_Cell':['7,805']
         }
 
     def test_init(self):

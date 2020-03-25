@@ -1,13 +1,5 @@
 """QC Module for Exporting 10x scrna metrics
-
-Some of the file-parsing logic is adapted from:
-
-    MultiQC: Summarize analysis results for multiple tools and samples in a single report
-    Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
-    Bioinformatics (2016)
-    doi: 10.1093/bioinformatics/btw354
-    PMID: 27312411
-    https://github.com/ewels/MultiQC
+@author Lauren Mogil <lmogil@uchicag.edu>
 """
 import json
 import os
@@ -28,7 +20,7 @@ class ExportTenXScrnaMetrics(ExportQcModule):
     """Extract 10x scrna metrics"""
 
     def __init__(self, options=dict()):
-        super().__init__(name="10x scrna flagstats", options=options)
+        super().__init__(name="10x scrna metrics", options=options)
 
     @classmethod
     def __add_arguments__(cls, subparser):
@@ -74,20 +66,11 @@ class ExportTenXScrnaMetrics(ExportQcModule):
                 )
             self.logger.info("Processing {0}".format(basename))
             self.data[basename] = dict()
-            fsize = os.stat(scrnametricsfile).st_size
-            if fsize > 5000:
-                raise ParserException(
-                    "Input file size '{0}' is larger than expected! Are you sure this is a 10x scrna metrics file?".format(
-                        fsize
-                    )
-                )
-
             self.data[basename]["10x_scrna_metrics"] = {
                 "bam": os.path.basename(self.options["bam"]),
                 "job_uuid": self.options["job_uuid"],
                 "data": self._parse_scrnametrics(),
                 }
-
         # Export data
         self.export()
 
@@ -119,11 +102,23 @@ class ExportTenXScrnaMetrics(ExportQcModule):
         """
         Parse the 10x metrics data from the loaded file data
         """
+        expected_headers = ['estimated_number_of_cells', 'mean_reads_per_cell',
+         'median_genes_per_cell', 'number_of_reads', 'valid_barcodes',
+         'sequencing_saturation', 'q30_bases_in_barcode', 'q30_bases_in_rna_read',
+         'q30_bases_in_sample_index', 'q30_bases_in_umi', 'reads_mapped_to_genome',
+         'reads_mapped_confidently_to_genome', 'reads_mapped_confidently_to_intergenic_regions',
+         'reads_mapped_confidently_to_intronic_regions', 'reads_mapped_confidently_to_exonic_regions',
+         'reads_mapped_confidently_to_transcriptome', 'reads_mapped_antisense_to_gene',
+         'fraction_reads_in_cells', 'total_genes_detected', 'median_umi_counts_per_cell']
         with open(scrnametricsfile, 'r') as csvfile:
-          readcsv = list(csv.reader(csvfile))
-          header = readcsv[0]
-          headerfix = [item.replace(" ","_") for item in header]
+          # readcsv = list(csv.reader(csvfile))
+          # header = readcsv[0]
+          readcsv = csv.reader(csvfile)
+          headerfix = [item.replace(" ","_").lower() for item in readcsv]
+          for head in expected_headers:
+              if head not in headerfix:
+                  raise ParserException("File header is incorrect. Check file.")
           values = readcsv[1]
-          metrics_dict = dict(zip(headerfix, values))
-          parsed_data = pd.DataFrame(metrics_dict.items())
+          parsed_data = dict(zip(headerfix, values))
+          # parsed_data = pd.DataFrame(metrics_dict.items())
         return parsed_data
