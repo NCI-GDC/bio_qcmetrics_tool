@@ -38,7 +38,7 @@ class TestExportScrnaMetrics(unittest.TestCase):
     def test_init(self):
         opts = {}
         cls = ExportTenXScrnaMetrics(options=opts)
-        self.assertEqual(cls.name, "scrna metrics")
+        self.assertEqual(cls.name, "10x scrna flagstats")
 
     def test__parse_scrnametrics(self):
         obj = ExportTenXScrnaMetrics(options={})
