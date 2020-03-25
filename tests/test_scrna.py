@@ -41,7 +41,7 @@ class TestExportScrnaMetrics(unittest.TestCase):
         self.assertEqual(cls.name, "scrna metrics")
 
     def test__parse_scrnametrics(self):
-        obj = TestExportScrnaMetrics(options={})
+        obj = ExportTenXScrnaMetrics(options={})
         ifil = get_test_data_path("scrna.metics.csv")
         rec = None
         with open(ifil, "rt") as fh:
@@ -72,7 +72,7 @@ class TestExportScrnaMetrics(unittest.TestCase):
         }
         exp_tables = set(["10x_scrna_metrics"])
         try:
-            obj = TestExportScrnaMetrics(options=opts)
+            obj = ExportTenXScrnaMetrics(options=opts)
             obj.do_work()
             with sqlite3.connect(fn) as conn:
                 cur = conn.cursor()
