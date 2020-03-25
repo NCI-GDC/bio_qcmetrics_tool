@@ -42,7 +42,7 @@ class TestExportScrnaMetrics(unittest.TestCase):
 
     def test__parse_scrnametrics(self):
         obj = ExportTenXScrnaMetrics(options={})
-        ifil = get_test_data_path("scrna.metics.csv")
+        ifil = get_test_data_path("scrna.metrics.csv")
         rec = None
         with open(ifil, "rt") as fh:
             res = obj._parse_scrnametrics(ifil)
