@@ -4,7 +4,7 @@
 import json
 import os
 import re
-# import pandas as pd
+import pandas as pd
 import sqlite3
 import csv
 
