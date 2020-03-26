@@ -4,7 +4,7 @@
 import json
 import os
 import re
-import pandas as pd
+# import pandas as pd
 import sqlite3
 import csv
 
@@ -66,18 +66,19 @@ class ExportTenXScrnaMetrics(ExportQcModule):
                 )
             self.logger.info("Processing {0}".format(basename))
             self.data[basename] = dict()
-            self.data[basename]["10x_scrna_metrics"] = {
-                "bam": os.path.basename(self.options["bam"]),
-                "job_uuid": self.options["job_uuid"],
-                "data": self._parse_scrnametrics(),
-                }
+            with open(scrnametricsfile, 'r') as csvfile:
+                self.data[basename]["10x_scrna_metrics"] = {
+                    "bam": os.path.basename(self.options["bam"]),
+                    "job_uuid": self.options["job_uuid"],
+                    "data": self._parse_scrnametrics(csvfile),
+                    }
         # Export data
         self.export()
 
     def to_sqlite(self):
         data = []
         for source in sorted(self.data):
-            record = self.data[source]["metrics"]
+            record = self.data[source]["10x_scrna_metrics"]
             for section in sorted(record["data"]):
                 curr = {
                     "job_uuid": record["job_uuid"],
@@ -98,7 +99,7 @@ class ExportTenXScrnaMetrics(ExportQcModule):
                 table_name = "10x_scrna_metrics"
                 df.to_sql(table_name, conn, if_exists="append")
 
-    def _parse_scrnametrics(self, fh):
+    def _parse_scrnametrics(self,csvfile):
         """
         Parse the 10x metrics data from the loaded file data
         """
@@ -110,15 +111,12 @@ class ExportTenXScrnaMetrics(ExportQcModule):
          'reads_mapped_confidently_to_intronic_regions', 'reads_mapped_confidently_to_exonic_regions',
          'reads_mapped_confidently_to_transcriptome', 'reads_mapped_antisense_to_gene',
          'fraction_reads_in_cells', 'total_genes_detected', 'median_umi_counts_per_cell']
-        with open(scrnametricsfile, 'r') as csvfile:
-          # readcsv = list(csv.reader(csvfile))
-          # header = readcsv[0]
-          readcsv = csv.reader(csvfile)
-          headerfix = [item.replace(" ","_").lower() for item in readcsv]
-          for head in expected_headers:
-              if head not in headerfix:
-                  raise ParserException("File header is incorrect. Check file.")
-          values = readcsv[1]
-          parsed_data = dict(zip(headerfix, values))
-          # parsed_data = pd.DataFrame(metrics_dict.items())
+        readcsv = csv.reader(csvfile)
+        header = [item.replace(" ","_").lower() for item in next(readcsv)]
+        parsed_data = {}
+        for head, value in zip(header, next(readcsv)):
+            parsed_data[head]=value
+        for h in expected_headers:
+             if h not in header:
+                 raise ParserException("File header is incorrect. Check file.")
         return parsed_data

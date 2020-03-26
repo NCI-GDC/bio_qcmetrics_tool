@@ -13,51 +13,40 @@ from utils import get_test_data_path, get_table_list, cleanup_files
 
 class TestExportScrnaMetrics(unittest.TestCase):
     def gen_results(self):
-        return {'Estimated_Number_of_Cells':['5,032'],
-        'Mean_Reads_per_Cell':['76,300'],
-        'Median_Genes_per_Cell':['2,214'],
-        'Number_of_Reads':['383,941,607'],
-        'Valid_Barcodes':['97.8%'],
-        'Sequencing_Saturation':['75.2%'],
-        'Q30_Bases_in_Barcode':['96.4%'],
-        'Q30_Bases_in_RNA_Read':['95.4%'],
-        'Q30_Bases_in_Sample_Index':['93.6%'],
-        'Q30_Bases_in_UMI':['96.5%'],
-        'Reads_Mapped_to_Genome':['97.1%'],
-        'Reads_Mapped_Confidently_to_Genome':['91.5%'],
-        'Reads_Mapped_Confidently_to_Intergenic_Regions':['4.1%'],
-        'Reads_Mapped_Confidently_to_Intronic_Regions':['31.9%'],
-        'Reads_Mapped_Confidently_to_Exonic_Regions':['55.5%'],
-        'Reads_Mapped_Confidently_to_Transcriptome':['52.3%'],
-        'Reads_Mapped_Antisense_to_Gene':['1.2%'],
-        'Fraction_Reads_in_Cells':['94.1%'],
-        'Total_Genes_Detected':['28,162'],
-        'Median_UMI_Counts_per_Cell':['7,805']
-        }
+        return {'estimated_number_of_cells': '5,032',
+                'mean_reads_per_cell': '76,300',
+                'median_genes_per_cell': '2,214',
+                'number_of_reads': '383,941,607',
+                'valid_barcodes': '97.8%',
+                'sequencing_saturation': '75.2%',
+                'q30_bases_in_barcode': '96.4%',
+                'q30_bases_in_rna_read': '95.4%',
+                'q30_bases_in_sample_index': '93.6%',
+                'q30_bases_in_umi': '96.5%',
+                'reads_mapped_to_genome': '97.1%',
+                'reads_mapped_confidently_to_genome': '91.5%',
+                'reads_mapped_confidently_to_intergenic_regions': '4.1%',
+                'reads_mapped_confidently_to_intronic_regions': '31.9%',
+                'reads_mapped_confidently_to_exonic_regions': '55.5%',
+                'reads_mapped_confidently_to_transcriptome': '52.3%',
+                'reads_mapped_antisense_to_gene': '1.2%',
+                'fraction_reads_in_cells': '94.1%',
+                'total_genes_detected': '28,162',
+                'median_umi_counts_per_cell': '7,805'}
 
     def test_init(self):
         opts = {}
         cls = ExportTenXScrnaMetrics(options=opts)
-        self.assertEqual(cls.name, "10x scrna flagstats")
+        self.assertEqual(cls.name, "10x scrna metrics")
 
     def test__parse_scrnametrics(self):
         obj = ExportTenXScrnaMetrics(options={})
         ifil = get_test_data_path("scrna.metrics.csv")
         rec = None
-        with open(ifil, "rt") as fh:
-            res = obj._parse_scrnametrics(ifil)
-            exp = self.gen_fstats_expected()# set up
-            self.assertEqual(res.keys(), exp.keys())
-        for key in exp:
-            if res[key] != exp[key]:
-                self.assertEqual(res[key].keys(), exp[key].keys())
-                for item in res[key]:
-                    if math.isnan(res[key][item]) and math.isnan(exp[key][item]):
-                        continue
-                    else:
-                        self.assertEqual(res[key][item], exp[key][item])
-            else:
-                self.assertEqual(res[key], exp[key])
+        with open(ifil, "r") as fh:
+            res = obj._parse_scrnametrics(fh)
+            exp = self.gen_results()
+            self.assertDictEqual(res, exp)
 
     def test_do_work(self):
         (fd, fn) = tempfile.mkstemp()

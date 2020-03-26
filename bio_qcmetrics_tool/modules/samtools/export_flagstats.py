@@ -6,7 +6,7 @@ Some of the file-parsing logic is adapted from:
     Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
     Bioinformatics (2016)
     doi: 10.1093/bioinformatics/btw354
-    PMID: 27312411 
+    PMID: 27312411
     https://github.com/ewels/MultiQC
 """
 import json
@@ -121,7 +121,7 @@ class ExportSamtoolsFlagstats(ExportQcModule):
 
     def _parse_flagstat(self, fh):
         """
-        Parse the flagstat data from the loaded file data 
+        Parse the flagstat data from the loaded file data
         """
         parsed_data = {}
         flagstat_regexes = {
