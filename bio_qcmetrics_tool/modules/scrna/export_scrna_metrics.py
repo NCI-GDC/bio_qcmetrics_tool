@@ -4,10 +4,9 @@
 import json
 import os
 import re
-import pandas as pd
+#import pandas as pd
 import sqlite3
 import csv
-
 from bio_qcmetrics_tool.utils.parse import parse_type, get_read_func
 from bio_qcmetrics_tool.modules.base import ExportQcModule
 from bio_qcmetrics_tool.modules.exceptions import (
@@ -113,10 +112,16 @@ class ExportTenXScrnaMetrics(ExportQcModule):
          'fraction_reads_in_cells', 'total_genes_detected', 'median_umi_counts_per_cell']
         readcsv = csv.reader(csvfile)
         header = [item.replace(" ","_").lower() for item in next(readcsv)]
-        parsed_data = {}
-        for head, value in zip(header, next(readcsv)):
-            parsed_data[head]=value
         for h in expected_headers:
-             if h not in header:
-                 raise ParserException("File header is incorrect. Check file.")
+            if h not in header:
+                raise ParserException("File header is incorrect. Check file.")
+        parsed_data = dict()
+        for row in readcsv:
+            rowfix = [r.replace("%","").replace(",","") for r in row]
+            for head, *value in zip(header, rowfix):
+                if head not in parsed_data:
+                    parsed_data[head]=value
+                else:
+                    parsed_data[head].append("".join(value))
+        print(parsed_data)
         return parsed_data
