@@ -4,7 +4,7 @@
 import json
 import os
 import re
-#import pandas as pd
+import pandas as pd
 import sqlite3
 import csv
 from bio_qcmetrics_tool.utils.parse import parse_type, get_read_func

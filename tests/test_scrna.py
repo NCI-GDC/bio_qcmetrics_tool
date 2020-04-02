@@ -3,7 +3,7 @@ import unittest
 import tempfile
 import sqlite3
 import math
-#import pandas as pd
+import pandas as pd
 
 from bio_qcmetrics_tool.modules.scrna import ExportTenXScrnaMetrics
 from bio_qcmetrics_tool.modules.exceptions import ParserException
