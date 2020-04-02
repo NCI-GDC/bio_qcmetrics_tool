@@ -123,5 +123,4 @@ class ExportTenXScrnaMetrics(ExportQcModule):
                     parsed_data[head]=value
                 else:
                     parsed_data[head].append("".join(value))
-        print(parsed_data)
         return parsed_data
