@@ -21,7 +21,6 @@ class TestExportScrnaMetrics(unittest.TestCase):
         'sequencing_saturation': ['75.2', '75.2'],
         'q30_bases_in_barcode': ['96.4', '96.4'],
         'q30_bases_in_rna_read': ['95.4', '95.4'],
-        'q30_bases_in_sample_index': ['93.6', '93.6'],
         'q30_bases_in_umi': ['96.5', '96.5'],
         'reads_mapped_to_genome': ['97.1', '97.1'],
         'reads_mapped_confidently_to_genome': ['91.5', '91.5'],
