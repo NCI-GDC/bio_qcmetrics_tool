@@ -105,11 +105,10 @@ class ExportTenXScrnaMetrics(ExportQcModule):
         expected_headers = ['estimated_number_of_cells', 'mean_reads_per_cell',
          'median_genes_per_cell', 'number_of_reads', 'valid_barcodes',
          'sequencing_saturation', 'q30_bases_in_barcode', 'q30_bases_in_rna_read',
-         'q30_bases_in_sample_index', 'q30_bases_in_umi', 'reads_mapped_to_genome',
-         'reads_mapped_confidently_to_genome', 'reads_mapped_confidently_to_intergenic_regions',
-         'reads_mapped_confidently_to_intronic_regions', 'reads_mapped_confidently_to_exonic_regions',
-         'reads_mapped_confidently_to_transcriptome', 'reads_mapped_antisense_to_gene',
-         'fraction_reads_in_cells', 'total_genes_detected', 'median_umi_counts_per_cell']
+         'q30_bases_in_umi', 'reads_mapped_to_genome','reads_mapped_confidently_to_genome',
+         'reads_mapped_confidently_to_intergenic_regions','reads_mapped_confidently_to_intronic_regions',
+         'reads_mapped_confidently_to_exonic_regions', 'reads_mapped_confidently_to_transcriptome',
+         'reads_mapped_antisense_to_gene','fraction_reads_in_cells', 'total_genes_detected', 'median_umi_counts_per_cell']
         readcsv = csv.reader(csvfile)
         header = [item.replace(" ","_").lower() for item in next(readcsv)]
         for h in expected_headers:
