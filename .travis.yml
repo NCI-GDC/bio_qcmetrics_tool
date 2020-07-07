@@ -26,7 +26,10 @@ jobs:
     - make publish-staging
   - stage: publish
     name: Publish production image
-    script: make publish-release
+    script:
+    - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
+    - make build
+    - make publish-release
 env:
   global:
   - BRANCH_NAME=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
