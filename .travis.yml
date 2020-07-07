@@ -1,17 +1,37 @@
 language: python
 
 python:
-  - "3.6.9"
-  - "3.5.2"
+  - "3.5"
 
-before_install:
-  - pip freeze
+git:
+  depth: false
 
-install:
-  - pip install -r test-requirements.txt
-  - python setup.py install
+services: docker
 
-before_script:
-  - pip freeze
+env:
+ global:
+   - BRANCH_NAME=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
 
-script: "python -m unittest discover -vs tests/"
+stages:
+- name: build
+- name: publish
+  if: branch = master
+- name: publish-staging
+  if: branch != master
+jobs:
+  include:
+  - stage: build
+    name: Build
+    script:
+    - make version version-pypi
+    - make build
+    - make test-docker
+  - stage: publish-staging
+    name: Publish staging image
+    script:
+    - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
+    - make build
+    - make publish-staging
+  - stage: publish
+    name: Publish production image
+    script: make publish-release
