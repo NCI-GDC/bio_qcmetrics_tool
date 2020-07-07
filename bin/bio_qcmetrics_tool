@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #!/bin/sh
 
 # Main entrypoint for application
