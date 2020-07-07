@@ -111,3 +111,7 @@ publish-staging: docker-login
 	docker tag ${DOCKER_IMAGE_LATEST} ${DOCKER_IMAGE_STAGING}
 	docker push ${DOCKER_IMAGE_STAGING}
 	docker push ${DOCKER_IMAGE_COMMIT}
+
+publish-release: docker-login
+	docker tag ${DOCKER_IMAGE_LATEST} ${DOCKER_IMAGE}
+	docker push ${DOCKER_IMAGE}
