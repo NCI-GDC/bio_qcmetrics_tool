@@ -5,7 +5,8 @@ MAINTAINER Kyle Hernandez <kmhernan@uchicago.edu>
 COPY ./dist /opt
 
 RUN make -C /opt init-pip \
-  && ln -s /opt/bin/bio_qcmetrics_tool /bin/bio_qcmetrics_tool
+  && ln -s /opt/bin/bio_qcmetrics_tool /bin/bio_qcmetrics_tool \
+  && chmod +x /bin/bio_qcmetrics_tool
 
 WORKDIR /opt
 
