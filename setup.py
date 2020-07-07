@@ -212,7 +212,7 @@ setup(
     url="https://github.com/NCI-GDC/bio_qcmetrics_tool",
     license="Apache 2.0",
     packages=find_packages(),
-    scripts=[os.path.join(os.path.dirname(__name__), 'bin', PACKAGE),],
+    scripts=[os.path.join(os.path.dirname(__name__), 'bin', PACKAGE)],
     install_requires=INSTALL_REQUIRES,
     tests_require=DEV_REQUIRES,
     cmdclass={
@@ -220,6 +220,7 @@ setup(
         "capture_version": CaptureVersion,
         "print_version": PrintVersion,
     },
+    test_suite="tests",
 )
 
 # __END__

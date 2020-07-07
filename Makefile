@@ -84,6 +84,7 @@ build-docker:
 	mkdir -p dist
 	cp -r build/lib/* dist/
 	cp -r bin/ dist/
+	cp -r tests/ dist/
 	cp -f Makefile requirements.txt README.md setup.py dist/
 	docker build . \
 		--file ./Dockerfile \
