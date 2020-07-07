@@ -1,11 +1,10 @@
 """Tests for `bio_qcmetrics_tool.modules.readgroups`"""
-import unittest
-import tempfile
 import sqlite3
+import tempfile
+import unittest
 
 from bio_qcmetrics_tool.modules.readgroups import ExportReadgroup
-
-from utils import get_test_data_path, get_table_list, cleanup_files
+from tests.utils import cleanup_files, get_table_list, get_test_data_path
 
 
 class TestExportReadgroup(unittest.TestCase):
