@@ -1,9 +1,10 @@
-language: python
-python:
-- '3.5'
+services: docker
+
 git:
   depth: false
-services: docker
+
+install: make build
+
 stages:
 - name: build
 - name: publish
@@ -16,19 +17,16 @@ jobs:
     name: Build
     script:
     - make version version-pypi
-    - make build
     - make test-docker
   - stage: publish-staging
     name: Publish staging image
     script:
     - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
-    - make build
     - make publish-staging
   - stage: publish
     name: Publish production image
     script:
     - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
-    - make build
     - make publish-release
 env:
   global:
