@@ -1,8 +1,10 @@
 """Codec for Picard metrics files."""
-import os
 
+from bio_qcmetrics_tool.modules.exceptions import (
+    ClassNotFoundException,
+    ParserException,
+)
 from bio_qcmetrics_tool.modules.picard.metrics.base import PICARD_METRICS_OBJECTS
-from bio_qcmetrics_tool.modules.exceptions import ParserException
 from bio_qcmetrics_tool.utils.parse import parse_type
 
 
@@ -26,7 +28,7 @@ class PicardMetricsFile:
         :param tool: Picard tool name parsed from header
         :type fpath: str
 
-        :param headers: list of header string 
+        :param headers: list of header string
         :type headers: list
 
         :param metrics: subclass of PicardMetric
@@ -65,6 +67,8 @@ class PicardMetricsFile:
         cls = None
         with open(self.fpath, "rt") as fh:
             line = ""
+            major_header_len = len(self.MAJOR_HEADER_PREFIX)
+            minor_header_len = len(self.MINOR_HEADER_PREFIX)
             for line in fh:
                 # Parse headers
                 line = line.rstrip("\r\n")
@@ -79,14 +83,14 @@ class PicardMetricsFile:
                         raise ParserException(
                             "Consecutive header class lines encountered."
                         )
-                    cls = line[len(self.MAJOR_HEADER_PREFIX) :].strip()
+                    cls = line[major_header_len:].strip()
                 elif line.startswith(self.MINOR_HEADER_PREFIX):
                     if not cls:
                         raise ParserException(
                             "Header class must precede header value: {0}".format(line)
                         )
 
-                    val = line[len(self.MINOR_HEADER_PREFIX) :]
+                    val = line[minor_header_len:]
                     header = (cls, val)
                     if not self.headers:
                         self.tool = val.split(" ")[0]

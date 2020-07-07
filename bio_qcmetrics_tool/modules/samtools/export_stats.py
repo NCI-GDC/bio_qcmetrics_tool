@@ -6,22 +6,23 @@ Some of the file-parsing logic is adapted from:
     Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
     Bioinformatics (2016)
     doi: 10.1093/bioinformatics/btw354
-    PMID: 27312411 
+    PMID: 27312411
     https://github.com/ewels/MultiQC
 
 """
 import json
 import os
 import re
-import pandas as pd
 import sqlite3
 
-from bio_qcmetrics_tool.utils.parse import parse_type, get_read_func
+import pandas as pd
+
 from bio_qcmetrics_tool.modules.base import ExportQcModule
 from bio_qcmetrics_tool.modules.exceptions import (
     DuplicateInputException,
     ParserException,
 )
+from bio_qcmetrics_tool.utils.parse import get_read_func, parse_type
 
 
 class ExportSamtoolsStats(ExportQcModule):
@@ -93,7 +94,7 @@ class ExportSamtoolsStats(ExportQcModule):
 
     def _parse_stats(self, fh):
         """
-        Parse the stats data from the file handle 
+        Parse the stats data from the file handle
         """
         parsed_data = {}
         for line in fh:
