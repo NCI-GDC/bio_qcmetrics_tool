@@ -1,17 +1,16 @@
 """Tests for `bio_qcmetrics_tool.modules.samtools`"""
-import unittest
-import tempfile
-import sqlite3
 import math
+import sqlite3
+import tempfile
+import unittest
 
+from bio_qcmetrics_tool.modules.exceptions import ParserException
 from bio_qcmetrics_tool.modules.samtools import (
     ExportSamtoolsFlagstats,
     ExportSamtoolsIdxstats,
     ExportSamtoolsStats,
 )
-from bio_qcmetrics_tool.modules.exceptions import ParserException
-
-from utils import get_test_data_path, get_table_list, cleanup_files
+from tests.utils import cleanup_files, get_table_list, get_test_data_path
 
 
 class TestExportSamtoolsFlagstats(unittest.TestCase):

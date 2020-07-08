@@ -1,10 +1,15 @@
-FROM python:3.5
+FROM python:3.5-stretch
 
 MAINTAINER Kyle Hernandez <kmhernan@uchicago.edu>
 
-# Copy over source
-COPY . /opt/bio_qcmetrics_tool/
-WORKDIR /opt/bio_qcmetrics_tool
+COPY ./dist /opt
 
-## Install python package
-RUN pip install .
+RUN make -C /opt init-pip \
+  && ln -s /opt/bin/bio_qcmetrics_tool /bin/bio_qcmetrics_tool \
+  && chmod +x /bin/bio_qcmetrics_tool
+
+WORKDIR /opt
+
+ENTRYPOINT ["/bin/bio_qcmetrics_tool"]
+
+CMD ["--help"]

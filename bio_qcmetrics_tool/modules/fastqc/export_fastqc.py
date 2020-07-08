@@ -7,17 +7,18 @@ Some of the file-parsing logic is adapted from:
     Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
     Bioinformatics (2016)
     doi: 10.1093/bioinformatics/btw354
-    PMID: 27312411 
+    PMID: 27312411
     https://github.com/ewels/MultiQC
 
 """
 import os
-import zipfile
-import pandas as pd
 import sqlite3
+import zipfile
 
-from bio_qcmetrics_tool.utils.parse import parse_type
+import pandas as pd
+
 from bio_qcmetrics_tool.modules.base import ExportQcModule
+from bio_qcmetrics_tool.utils.parse import parse_type
 
 
 class ExportFastqc(ExportQcModule):

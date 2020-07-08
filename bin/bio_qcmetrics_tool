@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Main entrypoint for application
+# Special arguments:
+## test: run test suite
+## help: display help
+
+# Otherwise, call script with given args
+
+case "$1" in
+	test) python -m pytest tests;;
+	*version) python -m biojss_client._version;;
+	*) python -m bio_qcmetrics_tool $@;;
+esac

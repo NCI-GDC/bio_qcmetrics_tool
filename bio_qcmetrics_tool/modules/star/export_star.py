@@ -6,18 +6,19 @@ Some of the file-parsing logic is adapted from:
     Philip Ewels, Mans Magnusson, Sverker Lundin and Max Kaller
     Bioinformatics (2016)
     doi: 10.1093/bioinformatics/btw354
-    PMID: 27312411 
+    PMID: 27312411
     https://github.com/ewels/MultiQC
 
 """
-import os
 import json
-import pandas as pd
+import os
 import re
 import sqlite3
 
-from bio_qcmetrics_tool.utils.parse import parse_type
+import pandas as pd
+
 from bio_qcmetrics_tool.modules.base import ExportQcModule
+from bio_qcmetrics_tool.utils.parse import parse_type
 
 
 class ExportStarStats(ExportQcModule):
@@ -210,8 +211,8 @@ class ExportStarStats(ExportQcModule):
         num_errors = 0
         num_genes = 0
         with open(f, "rt") as fh:
-            for l in fh:
-                s = l.split("\t")
+            for line in fh:
+                s = line.split("\t")
                 try:
                     for i in [1, 2, 3]:
                         s[i] = int(s[i])
