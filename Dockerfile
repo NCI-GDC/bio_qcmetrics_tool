@@ -4,11 +4,13 @@ MAINTAINER Kyle Hernandez <kmhernan@uchicago.edu>
 
 COPY ./dist /opt
 
-RUN make -C /opt init-pip \
+WORKDIR /opt
+
+RUN make init-pip \
+  && python setup.py install \
   && ln -s /opt/bin/bio_qcmetrics_tool /bin/bio_qcmetrics_tool \
   && chmod +x /bin/bio_qcmetrics_tool
 
-WORKDIR /opt
 
 ENTRYPOINT ["/bin/bio_qcmetrics_tool"]
 
