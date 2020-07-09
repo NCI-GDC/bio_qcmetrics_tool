@@ -9,6 +9,6 @@
 
 case "$1" in
 	test) python -m pytest tests;;
-	*version) python -m biojss_client._version;;
+	*version) python -m bio_qcmetrics_tool --version;;
 	*) python -m bio_qcmetrics_tool $@;;
 esac
