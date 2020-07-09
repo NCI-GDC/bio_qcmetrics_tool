@@ -45,6 +45,7 @@ init-pip:
 	@echo
 	@echo -- Installing pip packages --
 	pip3 install --no-cache-dir -r requirements.txt
+	python3 setup.py develop
 
 init-hooks:
 	@echo
