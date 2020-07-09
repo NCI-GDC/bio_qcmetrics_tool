@@ -16,10 +16,6 @@ DOCKER_IMAGE_LATEST := ${DOCKER_REPO}/${REPO}:latest
 DOCKER_IMAGE_STAGING := ${DOCKER_REPO}/${REPO}:staging
 DOCKER_IMAGE_PRODUCTION := ${DOCKER_REPO}/${REPO}:${VERSION}
 
-.PHONY: docker-login
-docker-login:
-	@docker login -u=${QUAY_USERNAME} -p=${QUAY_PASSWORD} quay.io
-
 .PHONY: version version-*
 version:
 	@echo --- VERSION: ${LONG_VERSION} ---
@@ -37,6 +33,10 @@ version-docker:
 	@echo ${DOCKER_IMAGE}
 	@echo ${DOCKER_IMAGE_COMMIT}
 	@echo ${DOCKER_IMAGE_LATEST}
+
+.PHONY: docker-login
+docker-login:
+	@docker login -u=${QUAY_USERNAME} -p=${QUAY_PASSWORD} quay.io
 
 .PHONY: build build-* clean init init-* lint requirements run version
 init: init-pip init-hooks
