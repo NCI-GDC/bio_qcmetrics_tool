@@ -12,10 +12,10 @@ install: make build
 
 stages:
 - name: build
-- name: publish
-  if: branch = master
+- name: publish-production
+  if: branch = master AND type != pull_request
 - name: publish-staging
-  if: branch != master
+  if: branch != master AND type != pull_request
 jobs:
   include:
   - stage: build
@@ -28,7 +28,7 @@ jobs:
     script:
     - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
     - make publish-staging
-  - stage: publish
+  - stage: publish-production
     name: Publish production image
     script:
     - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
