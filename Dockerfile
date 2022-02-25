@@ -1,15 +1,22 @@
-FROM python:3.5-stretch
+FROM quay.io/ncigdc/python38-builder as builder
 
-MAINTAINER Kyle Hernandez <kmhernan@uchicago.edu>
-
-COPY ./dist /opt
+COPY ./ /opt
 
 WORKDIR /opt
 
-RUN make init-pip \
-  && ln -s /opt/bin/bio_qcmetrics_tool /bin/bio_qcmetrics_tool
+RUN pip install tox && tox -p
 
+FROM quay.io/ncigdc/python38
 
-ENTRYPOINT ["/bin/bio_qcmetrics_tool"]
+COPY --from=builder /opt/dist/*.tar.gz /opt
+COPY requirements.txt /opt
+
+WORKDIR /opt
+
+RUN pip install -r requirements.txt \
+	&& pip install *.tar.gz \
+	&& rm -f *.tar.gz requirements.txt
+
+ENTRYPOINT ["bio_qcmetrics_tool"]
 
 CMD ["--help"]
