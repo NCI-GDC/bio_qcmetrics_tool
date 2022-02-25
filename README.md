@@ -22,7 +22,7 @@ Some of the log/metrics file parsing logic was adapted from:
 
 ## Install
 
-In a python3.5 virtual environment, run `make init`.
+In a python3.8 virtual environment, run `make init`.
 
 This will install `pre-commit` and `pip install` the dependencies in the `requirements.txt` file.
 
