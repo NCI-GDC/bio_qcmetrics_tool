@@ -14,21 +14,26 @@ Some of the file-parsing logic is adapted from:
 import os
 import sqlite3
 import zipfile
+from typing import IO, TYPE_CHECKING, Generator, List, Optional, Tuple
 
 import pandas as pd
 
 from bio_qcmetrics_tool.modules.base import ExportQcModule
 from bio_qcmetrics_tool.utils.parse import parse_type
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser
+    from zipfile import ZipFile
+
 
 class ExportFastqc(ExportQcModule):
     """Export FastQC metrics"""
 
-    def __init__(self, options=dict()):
+    def __init__(self, options: Optional[dict] = None) -> None:
         super().__init__(name="fastqc", options=options)
 
     @classmethod
-    def __add_arguments__(cls, subparser):
+    def __add_arguments__(cls, subparser: 'ArgumentParser') -> None:
         subparser.add_argument(
             "-i",
             "--inputs",
@@ -46,10 +51,10 @@ class ExportFastqc(ExportQcModule):
         )
 
     @classmethod
-    def __get_description__(cls):
+    def __get_description__(cls) -> str:
         return "Extract FastQC report from zip archive(s)."
 
-    def do_work(self):
+    def do_work(self) -> None:
         super().do_work()
 
         self.logger.info(
@@ -88,12 +93,12 @@ class ExportFastqc(ExportQcModule):
         # Export
         self.export()
 
-    def to_sqlite(self):
+    def to_sqlite(self) -> None:
         """
         Export to sqlite file.
         """
-        sum_dat = []
-        detail_dat = {}
+        sum_dat: list = []
+        detail_dat: dict = {}
         for source in sorted(self.data):
             for section in self.data[source]:
                 if section == "fastqc_summary":
@@ -146,7 +151,7 @@ class ExportFastqc(ExportQcModule):
                     df = pd.DataFrame(detail_dat[k])
                     df.to_sql(table_name, conn, if_exists="append")
 
-    def get_fastqc_file_names(self, zip_object):
+    def get_fastqc_file_names(self, zip_object: 'ZipFile') -> Tuple[str, str]:
         """
         Extract the fastqc file names from the fastqc zip.
         """
@@ -162,15 +167,16 @@ class ExportFastqc(ExportQcModule):
 
         return fastqc_data_file, fastqc_summary_file
 
-    def get_fastq_name(self, fo):
+    def get_fastq_name(self, fo: IO) -> Optional[str]:
         """Extracts fastq name from fastqc data file"""
         for line in fo:
             line = line.decode("utf-8").rstrip("\r\n")
             if line.startswith("Filename\t"):
-                cols = line.split("\t")
+                cols: List[str] = line.split("\t")
                 return cols[1].strip()
+        return None
 
-    def parse_fastqc_summary(self, source, fastq, fo):
+    def parse_fastqc_summary(self, source: str, fastq: str, fo: IO) -> None:
         """
         Extracts the summary data from the fastqc_summary file.
         """
@@ -185,14 +191,12 @@ class ExportFastqc(ExportQcModule):
         if "Per tile sequence quality" not in self.data[source][section]:
             self.data[source][section]["Per tile sequence quality"] = None
 
-    def parse_fastqc_data(self, source, fastq, fo):
+    def parse_fastqc_data(self, source: str, fastq: str, fo: IO) -> None:
         """
         Extracts all the sections from the fastqc data file.
         """
         total_dedup = None
-        for section, state, header, extra, data in self._fastqc_data_section_generator(
-            fo
-        ):
+        for section, _, header, extra, data in self._fastqc_data_section_generator(fo):
             if section not in self.data[source]:
                 self.data[source][section] = {
                     "fastq": fastq,
@@ -228,7 +232,9 @@ class ExportFastqc(ExportQcModule):
             "Total Deduplicated Percentage"
         ] = total_dedup
 
-    def _fastqc_data_section_generator(self, fo):
+    def _fastqc_data_section_generator(
+        self, fo: IO
+    ) -> Generator[Tuple[str, str, str, str, list], None, None]:
         """
         Extract a section of fastqc data and yield it.
         """
@@ -236,13 +242,13 @@ class ExportFastqc(ExportQcModule):
         state = None
         header = None
         extra = None
-        data = []
+        data: list = []
         for line in fo:
             line = line.decode("utf-8").rstrip("\r\n")
             if line.startswith("##") and not section:
                 continue
             elif line.startswith(">>END_MODULE"):
-                yield section, state, header, extra, data
+                yield section, state, header, extra, data  # type: ignore
                 section = None
                 header = None
                 extra = None
@@ -259,4 +265,4 @@ class ExportFastqc(ExportQcModule):
             else:
                 data.append(line.split("\t"))
         if section:
-            yield section, state, header, extra, data
+            yield section, state, header, extra, data  # type: ignore
