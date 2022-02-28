@@ -1,13 +1,17 @@
-import sys
 import os
-from io import StringIO
+import sys
 from contextlib import contextmanager
+from io import StringIO
+from typing import TYPE_CHECKING, Generator, List, Tuple
 
 from bio_qcmetrics_tool.utils.logger import Logger
 
+if TYPE_CHECKING:
+    from sqlite3 import Cursor
+
 
 @contextmanager
-def captured_output():
+def captured_output() -> Generator[Tuple[StringIO, StringIO], None, None]:
     """Captures stderr and stdout and returns them"""
     new_out, new_err = StringIO(), StringIO()
     old_out, old_err = sys.stdout, sys.stderr
@@ -19,7 +23,7 @@ def captured_output():
         sys.stdout, sys.stderr = old_out, old_err
 
 
-def get_test_data_path(fname):
+def get_test_data_path(fname: str) -> str:
     """
     Helper function to get full path to a test
     dataset give the basename.
@@ -29,7 +33,7 @@ def get_test_data_path(fname):
     return path
 
 
-def get_table_list(cur):
+def get_table_list(cur: 'Cursor') -> list:
     """
     Gets a list of tables in the sqlite db provided the cursor.
     """
@@ -38,14 +42,10 @@ def get_table_list(cur):
     return rows
 
 
-def cleanup_files(files):
+def cleanup_files(files: List[str]) -> None:
     """
     Takes a file or a list of files and removes them.
     """
-
-    def _do_remove(fil):
-        if os.path.exists(fil):
-            os.remove(fil)
 
     flist = []
     if isinstance(files, list):
@@ -54,4 +54,5 @@ def cleanup_files(files):
         flist = [files]
 
     for fil in flist:
-        _do_remove(fil)
+        if os.path.exists(fil):
+            os.remove(fil)
