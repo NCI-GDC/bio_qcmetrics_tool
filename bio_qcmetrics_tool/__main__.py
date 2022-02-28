@@ -3,20 +3,21 @@ import argparse
 import importlib
 import inspect
 import pkgutil
-import sys
 from signal import SIG_DFL, SIGPIPE, signal
+from types import ModuleType
+from typing import TYPE_CHECKING
 
 from bio_qcmetrics_tool.utils.logger import Logger
 
-try:
-    from bio_qcmetrics_tool import __version__
-except Exception:
-    __version__ = '0.0.0'
+if TYPE_CHECKING:
+    from argparse import _SubParsersAction, ArgumentParser
+
+from bio_qcmetrics_tool import __version__
 
 signal(SIGPIPE, SIG_DFL)
 
 
-def main(args=None, extra_subparser=None):
+def main() -> None:
     """
     Main wrapper function.
     """
@@ -35,13 +36,13 @@ def main(args=None, extra_subparser=None):
     cls.do_work()
 
 
-def add_export_tools(subparsers):
+def add_export_tools(subparsers: '_SubParsersAction[ArgumentParser]') -> None:
     """
     Dynamically load all export tools.
     """
     from bio_qcmetrics_tool.modules.base import ExportQcModule
 
-    def predicate(obj):
+    def predicate(obj: ModuleType) -> bool:
         return inspect.isclass(obj) and issubclass(obj, ExportQcModule)
 
     export_parser = subparsers.add_parser(
