@@ -1,12 +1,15 @@
 """Module containing general utilities for parsing"""
 import gzip
+from typing import Callable, Union
+
+ParseT = Union[None, float, int, str]
 
 
-def parse_type(item, na=None):
+def parse_type(item: str, na: None = None) -> ParseT:
     """
     Attempts to parse a string into basic python types.
     """
-    value = None
+    value: ParseT = None
 
     try:
         if not item:
@@ -21,12 +24,13 @@ def parse_type(item, na=None):
     return value
 
 
-def get_read_func(fpath):
+def get_read_func(fpath: str) -> Callable:
     """
     Returns either the open or gzip.open function
     for a provided file path. This is only for reading, so the file
     has to exist.
     """
+    func: Callable
     func = open
 
     # Open file and check for gzip header
