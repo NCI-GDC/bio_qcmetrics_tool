@@ -1,12 +1,22 @@
 from __future__ import absolute_import
 
+from typing import Optional
+
+from bio_qcmetrics_tool.modules.picard.codec import PicardMetricsFile
+
 from .base import PicardMetric
 
 
 class QualityDistributionMetrics(PicardMetric):
     picard_tool_name = "CollectQualityDistributionMetrics"
 
-    def __init__(self, source, histogram, field_names=None, values=None):
+    def __init__(
+        self,
+        source: str,
+        histogram: dict,
+        field_names: Optional[list] = None,
+        values: Optional[list] = None,
+    ):
         super().__init__(
             class_name="QualityDistributionMetrics",
             source=source,
@@ -17,11 +27,13 @@ class QualityDistributionMetrics(PicardMetric):
         )
 
     @classmethod
-    def from_picard_file_instance(cls, obj):
+    def from_picard_file_instance(
+        cls, obj: PicardMetricsFile
+    ) -> 'QualityDistributionMetrics':
         return cls(obj.fpath, obj._histograms[0])
 
     @staticmethod
-    def codec_match(obj):
+    def codec_match(obj: PicardMetricsFile) -> bool:
         if not obj._metrics and obj._histograms:
             if (
                 obj._histograms[0]["bin"] == "QUALITY"
@@ -29,6 +41,3 @@ class QualityDistributionMetrics(PicardMetric):
             ):
                 return True
         return False
-
-    def for_sqlite(self, job_uuid, source):
-        pass

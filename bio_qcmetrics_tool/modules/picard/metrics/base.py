@@ -3,12 +3,29 @@ import importlib
 import inspect
 import pkgutil
 import sys
-
 from abc import ABCMeta, abstractmethod
+from typing import TYPE_CHECKING, Any, List, Optional, Type, TypedDict, Union
 
 from bio_qcmetrics_tool.utils.logger import Logger
 
-PICARD_METRICS_OBJECTS = []
+if TYPE_CHECKING:
+    from bio_qcmetrics_tool.modules.picard.codec import PicardMetricsFile
+
+
+class HistogramDict(TypedDict):
+    colnames: Any
+    data: Any
+
+
+class MetricsDict(TypedDict):
+    colnames: Any
+    data: Any
+
+
+class ExtractedMetricsDict(TypedDict):
+    derived_from_key: Optional[str]
+    metric: Optional[MetricsDict]
+    histogram: Optional[HistogramDict]
 
 
 class PicardMetric(metaclass=ABCMeta):
@@ -21,12 +38,12 @@ class PicardMetric(metaclass=ABCMeta):
 
     def __init__(
         self,
-        class_name=None,
-        source=None,
-        histogram=None,
-        derived_from_key=None,
-        field_names=None,
-        values=None,
+        class_name: str,
+        source: str,
+        histogram: Optional[dict] = None,
+        derived_from_key: Optional[str] = None,
+        field_names: Optional[List[str]] = None,
+        values: Optional[List[str]] = None,
     ):
         """
         Initialze a PicardMetric object.
@@ -44,52 +61,54 @@ class PicardMetric(metaclass=ABCMeta):
         :type derived_from_key: str
         """
         self.logger = Logger.get_logger(self.__class__.__name__)
-        self.class_name = class_name
-        self.source = source
-        self.field_names = [] if field_names is None else field_names
-        self.values = [] if values is None else values
-        self.histogram = histogram
-        self.derived_from_key = derived_from_key
+        self.class_name: str = class_name
+        self.source: str = source
+        self.field_names: List[str] = [] if field_names is None else field_names
+        self.values: list = [] if values is None else values
+        self.histogram: Optional[dict] = histogram
+        self.derived_from_key: Optional[str] = derived_from_key
 
     @classmethod
     @abstractmethod
-    def from_picard_file_instance(cls, obj):
+    def from_picard_file_instance(cls, obj: 'PicardMetricsFile') -> 'PicardMetric':
         """
         Initialize the class from the PicardMetricsFile instance.
         """
 
-    def extract_metrics(self):
+    def extract_metrics(self) -> ExtractedMetricsDict:
         """
         Entry point to get formatted metrics results.
         """
         self.logger.info("{0} - {1}".format(self.__class__.__name__, self.source))
-        dat = {
-            "derived_from_key": self.derived_from_key,
-            "metric": None
-            if not self.field_names and not self.values
-            else {"colnames": self.field_names, "data": self.values},
-            "histogram": None
-            if self.histogram is None
-            else {
-                "colnames": self.histogram["labels"],
-                "data": self.histogram["values"],
-            },
-        }
+        metrics_dict: Optional[MetricsDict] = None
+        histogram_dict: Optional[HistogramDict] = None
+        if self.field_names and self.values:
+            metrics_dict = MetricsDict(colnames=self.field_names, data=self.values)
+        if self.histogram is not None:
+            histogram_dict = HistogramDict(
+                colnames=self.histogram["labels"], data=self.histogram["values"]
+            )
+
+        dat = ExtractedMetricsDict(
+            derived_from_key=self.derived_from_key,
+            metric=metrics_dict,
+            histogram=histogram_dict,
+        )
         return dat
 
-    def add_field_names(self, fields):
+    def add_field_names(self, fields: Union[list, str]) -> None:
         if isinstance(fields, list):
             self.field_names.extend(fields)
         else:
             self.field_names.append(fields)
 
-    def add_value_row(self, row):
+    def add_value_row(self, row: list) -> None:
         assert isinstance(row, list)
         self.values.append(row)
 
     @staticmethod
     @abstractmethod
-    def codec_match(obj):
+    def codec_match(obj: 'PicardMetricsFile') -> bool:
         """
         All subclasses must implement this function to check whether the
         metrics file object matches this class.
@@ -97,9 +116,11 @@ class PicardMetric(metaclass=ABCMeta):
         raise NotImplementedError("Not implemented!")
 
 
+PICARD_METRICS_OBJECTS: List[Type[PicardMetric]] = []
+
 if not PICARD_METRICS_OBJECTS:
 
-    def predicate(obj):
+    def predicate(obj: PicardMetric) -> bool:
         return inspect.isclass(obj) and issubclass(obj, PicardMetric)
 
     mod = sys.modules["bio_qcmetrics_tool.modules.picard.metrics"]
