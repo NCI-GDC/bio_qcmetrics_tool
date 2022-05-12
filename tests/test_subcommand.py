@@ -1,13 +1,13 @@
 """Tests the `bio_qcmetrics_tool.modules.base` `Subcommand` and
 `ExportQcModule` classes
 """
-import unittest
-import attr
 import argparse
+import unittest
 
-from bio_qcmetrics_tool.modules.base import Subcommand, ExportQcModule
+import attr
 
-from utils import captured_output
+from bio_qcmetrics_tool.modules.base import ExportQcModule, Subcommand
+from tests.utils import captured_output
 
 
 @attr.s

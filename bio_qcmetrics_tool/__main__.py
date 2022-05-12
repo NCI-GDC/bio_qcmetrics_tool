@@ -1,13 +1,17 @@
 """Main entrypoint for all modules."""
-import pkgutil
+import argparse
 import importlib
 import inspect
+import pkgutil
 import sys
-import argparse
-
-from signal import signal, SIGPIPE, SIG_DFL
+from signal import SIG_DFL, SIGPIPE, signal
 
 from bio_qcmetrics_tool.utils.logger import Logger
+
+try:
+    from bio_qcmetrics_tool import __version__
+except Exception:
+    __version__ = '0.0.0'
 
 signal(SIGPIPE, SIG_DFL)
 
@@ -19,7 +23,8 @@ def main(args=None, extra_subparser=None):
     # Set up logger
     Logger.setup_root_logger()
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser("bio_qcmetrics_tool")
+    parser.add_argument('--version', action='version', version=__version__)
     main_subparsers = parser.add_subparsers(dest="main_subcommand")
     main_subparsers.required = True
 

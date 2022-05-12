@@ -1,4 +1,9 @@
 # bio_qcmetrics_tool
+
+[![Docker Repository on Quay](https://quay.io/repository/ncigdc/bio-qcmetrics-tool/status?token=6f93e569-076e-45cc-b52f-ac0aba79b5c5 "Docker Repository on Quay")](https://quay.io/repository/ncigdc/bio-qcmetrics-tool)
+
+[![Build Status](https://travis-ci.com/NCI-GDC/bio_qcmetrics_tool.svg?token=p66Cyx1mwd8vvwEuBvRM&branch=master)](https://travis-ci.com/NCI-GDC/bio_qcmetrics_tool)
+
 Framework for serializing QC metrics into different formats for bioinformatics workflows. Currently,
 only the ability to take the metrics files and convert to sqlite is supported. The ability to add new
 modules is simple, by just inheriting the `ExportQcModule` class and the tool is automatically
@@ -17,7 +22,9 @@ Some of the log/metrics file parsing logic was adapted from:
 
 ## Install
 
-1. Using python3.5+, install `pip install .`
+In a python3.5 virtual environment, run `make init`.
+
+This will install `pre-commit` and `pip install` the dependencies in the `requirements.txt` file.
 
 ## Export
 

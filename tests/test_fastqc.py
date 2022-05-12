@@ -1,12 +1,17 @@
 """Tests for `bio_qcmetrics_tool.modules.fastqc`"""
-import unittest
-import attr
-import tempfile
 import sqlite3
+import tempfile
+import unittest
+
+import attr
 
 from bio_qcmetrics_tool.modules.fastqc import ExportFastqc
-
-from utils import captured_output, get_test_data_path, get_table_list, cleanup_files
+from tests.utils import (
+    captured_output,
+    cleanup_files,
+    get_table_list,
+    get_test_data_path,
+)
 
 
 @attr.s

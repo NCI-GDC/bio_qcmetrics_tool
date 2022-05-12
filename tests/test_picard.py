@@ -1,8 +1,8 @@
 """Tests for `bio_qcmetrics_tool.modules.picard`"""
-import unittest
-import tempfile
-import sqlite3
 import os
+import sqlite3
+import tempfile
+import unittest
 
 from bio_qcmetrics_tool.modules.picard import ExportPicardMetrics
 from bio_qcmetrics_tool.modules.picard.codec import PicardMetricsFile
@@ -10,8 +10,12 @@ from bio_qcmetrics_tool.modules.picard.metrics.base import (
     PICARD_METRICS_OBJECTS,
     PicardMetric,
 )
-
-from utils import captured_output, get_test_data_path, get_table_list, cleanup_files
+from tests.utils import (
+    captured_output,
+    cleanup_files,
+    get_table_list,
+    get_test_data_path,
+)
 
 
 class TestPicardMetricsFile(unittest.TestCase):
