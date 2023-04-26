@@ -1,10 +1,9 @@
 """QC Module for Exporting Picard Metrics"""
 import os
-import json
-import pandas as pd
 import sqlite3
 
-from bio_qcmetrics_tool.utils.parse import parse_type
+import pandas as pd
+
 from bio_qcmetrics_tool.modules.base import ExportQcModule
 from bio_qcmetrics_tool.modules.picard.codec import PicardMetricsFile
 

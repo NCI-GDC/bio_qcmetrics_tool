@@ -3,7 +3,6 @@ import importlib
 import inspect
 import pkgutil
 import sys
-
 from abc import ABCMeta, abstractmethod
 
 from bio_qcmetrics_tool.utils.logger import Logger

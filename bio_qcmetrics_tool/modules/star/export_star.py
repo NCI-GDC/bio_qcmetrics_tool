@@ -10,7 +10,6 @@ Some of the file-parsing logic is adapted from:
     https://github.com/ewels/MultiQC
 
 """
-import json
 import os
 import re
 import sqlite3
@@ -18,7 +17,6 @@ import sqlite3
 import pandas as pd
 
 from bio_qcmetrics_tool.modules.base import ExportQcModule
-from bio_qcmetrics_tool.utils.parse import parse_type
 
 
 class ExportStarStats(ExportQcModule):
@@ -202,7 +200,7 @@ class ExportStarStats(ExportQcModule):
         return parsed_data
 
     def parse_star_genecount_report(self, f):
-        """ Parse a STAR gene counts output file """
+        """Parse a STAR gene counts output file"""
         # Three numeric columns: unstranded, stranded/first-strand, stranded/second-strand
         keys = ["N_unmapped", "N_multimapping", "N_noFeature", "N_ambiguous"]
         unstranded = {"N_genes": 0}
@@ -280,7 +278,6 @@ class ExportStarStats(ExportQcModule):
         )
 
         with sqlite3.connect(self.options["output"]) as conn:
-
             if star_stats:
                 df = pd.DataFrame(star_stats)
                 table_name = "star_stats"
