@@ -1,3 +1,6 @@
-from bio_qcmetrics_tool._version import __short_version__
+try:
+    from bio_qcmetrics_tool._version import version
+except ImportError:
+    version = "0"
 
-__version__ = __short_version__
+__version__ = version
