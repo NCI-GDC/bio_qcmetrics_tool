@@ -1,7 +1,133 @@
+[build-system]
+requires = ["flit_scm"]
+build-backend = "flit_scm:buildapi"
+
+[project]
+name = "bio_qcmetrics_tool"
+description = "Python Boilerplate contains all the boilerplate you need to create a Python package."
+authors = [
+    {name = "Charles Czysz", email = "czysz@uchicago.edu"}
+]
+
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+	"Programming Language :: Python :: 3",
+	"Programming Language :: Python :: 3 :: Only"
+]
+dynamic = ["version"]
+dependencies = [
+    "click"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "detect-secrets==1.4.0",
+    "ruff",
+    "isort",
+    "mypy",
+    "pre-commit>=2.9.0",
+]
+
+test = [
+    "coverage[toml]",
+    "pytest",
+]
+
+[project.urls]
+homepage = "https://github.com/NCI-GDC/bio_qcmetrics_tool"
+
+[project.scripts]
+"bio_qcmetrics_tool" = "bio_qcmetrics_tool.__main__:main"
+
+[tool.setuptools_scm]
+write_to = "bio_qcmetrics_tool/_version.py"
+local_scheme = "dirty-tag"
+version_scheme = "python-simplified-semver"
+fallback_version = "0"
+
+[tool.coverage.run]
+source = ["bio_qcmetrics_tool"]
+branch = true
+parallel = true
+
+[tool.flit.module]
+name = "bio_qcmetrics_tool"
+
+[tool.flit.sdist]
+include = ["bio_qcmetrics_tool/_version.py"]
+exclude = [
+        ".*",
+        "dev-requirements.*",
+        "Dockerfile",
+        "Jenkinsfile",
+        "*travis.yml",
+        "tox.ini",
+]
+
 [tool.black]
 line-length = 88
 skip-string-normalization = true
-target-version = ['py35']
+target-version = ['py311']
 
-[flake8]
-max-line-length = 88
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses=true
+line_length = 88
+
+[tool.mypy]
+python_version = 3.8
+disallow_untyped_defs = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F"]
+ignore = ["E501"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+target-version = 'py311'
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402"]
