@@ -1,51 +1,45 @@
-VERSION = 0.1.0
-REPO = bio-qcmetrics-tool
+REPO = bio_qcmetrics_tool
+
 MODULE = bio_qcmetrics_tool
-BRANCH_NAME?=unknown
 
-GIT_SHORT_HASH:=$(shell git rev-parse --short HEAD)
+# Redirect error when run in container
+COMMIT_HASH:=$(shell git rev-parse HEAD 2>/dev/null)
+GIT_DESCRIBE:=$(shell git describe --tags --always 2>/dev/null)
 
-LONG_VERSION:=$(shell python3 setup.py -q capture_version --semver ${VERSION} --branch ${BRANCH_NAME})
-PYPI_VERSION:=$(shell python3 setup.py -q print_version --pypi)
-COMMIT_HASH:=$(shell python3 setup.py -q print_version --hash)
+DOCKER_REGISTRY := docker.osdc.io
+DOCKER_IMAGE_COMMIT := ${DOCKER_REGISTRY}/ncigdc/${REPO}:${COMMIT_HASH}
+DOCKER_IMAGE_DESCRIBE := ${DOCKER_REGISTRY}/ncigdc/${REPO}:${GIT_DESCRIBE}
+DOCKER_IMAGE_LATEST := ${DOCKER_REGISTRY}/ncigdc/${REPO}:latest
 
-DOCKER_REPO := quay.io/ncigdc
-DOCKER_IMAGE := ${DOCKER_REPO}/${REPO}:${LONG_VERSION}
-DOCKER_IMAGE_COMMIT := ${DOCKER_REPO}/${REPO}:${COMMIT_HASH}
-DOCKER_IMAGE_LATEST := ${DOCKER_REPO}/${REPO}:latest
-DOCKER_IMAGE_STAGING := ${DOCKER_REPO}/${REPO}:staging
-DOCKER_IMAGE_PRODUCTION := ${DOCKER_REPO}/${REPO}:${VERSION}
+# Env args
+PIP_EXTRA_INDEX_URL ?=
+PROXY ?=
+
 
 .PHONY: version version-*
 version:
-	@echo --- VERSION: ${LONG_VERSION} ---
-
-version-short:
-	@echo ${VERSION}
-
-version-long:
-	@echo ${LONG_VERSION}
-
-version-pypi:
-	@echo ${PYPI_VERSION}
+	@python -m setuptools_scm
 
 version-docker:
-	@echo ${DOCKER_IMAGE}
-	@echo ${DOCKER_IMAGE_COMMIT}
-	@echo ${DOCKER_IMAGE_LATEST}
+	@echo ${DOCKER_IMAGE_DESCRIBE}
 
 .PHONY: docker-login
 docker-login:
-	@docker login -u=${QUAY_USERNAME} -p=${QUAY_PASSWORD} quay.io
+	docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
 
-.PHONY: build build-* clean init init-* lint requirements run version
+.PHONY: venv
+venv:
+	@echo
+	rm -rf .venv/
+	tox -r -e dev --devenv .venv
+
+.PHONY: init init-*
 init: init-pip init-hooks
-
 init-pip:
 	@echo
 	@echo -- Installing pip packages --
-	pip3 install --no-cache-dir -r requirements.txt
-	python3 setup.py develop
+	python -m pip install ".[dev,test]"
+	python -m pip install --no-deps -r requirements.txt -e .
 
 init-hooks:
 	@echo
@@ -54,68 +48,76 @@ init-hooks:
 
 init-venv:
 	@echo
-	PIP_REQUIRE_VIRTUALENV=true pip3 install --upgrade pip-tools
+	PIP_REQUIRE_VIRTUALENV=true python -m pip install --upgrade pip pip-tools
 
-clean:
+.PHONY: clean clean-*
+clean: clean-dirs
+clean-dirs:
 	rm -rf ./build/
 	rm -rf ./dist/
 	rm -rf ./*.egg-info/
+	rm -rf ./test-reports/
+	rm -rf ./htmlcov/
 
-lint:
+clean-docker:
 	@echo
-	@echo -- Lint --
-	python3 -m flake8 \
-		--ignore=E501,F401,E302,E502,E126,E731,W503,W605,F841,C901 \
-		${MODULE}/
 
-run:
-	bin/run
 
-requirements: init-venv
-	python3 setup.py -q capture_requirements --dev
-	pip-compile -o requirements.txt requirements.in
+.PHONY: requirements requirements-*
+requirements:
+	tox -e requirements
 
 .PHONY: build build-*
 
 build: build-docker
 
-build-docker:
+build-docker: clean
 	@echo
 	@echo -- Building docker --
-	python3 setup.py build
-	mkdir -p dist
-	cp -r build/lib/* dist/
-	cp -r bin/ dist/
-	cp -r tests/ dist/
-	cp -f Makefile requirements.txt README.md setup.py dist/
 	docker build . \
 		--file ./Dockerfile \
+		--build-arg http_proxy="${PROXY}" \
+		--build-arg https_proxy="${PROXY}" \
+		--build-arg REGISTRY="${DOCKER_REGISTRY}" \
 		-t "${DOCKER_IMAGE_COMMIT}" \
-		-t "${DOCKER_IMAGE}" \
-		-t "${DOCKER_IMAGE_LATEST}"
+		-t "${DOCKER_IMAGE_DESCRIBE}" \
+		-t "${REPO}"
 
-.PHONY: test test-*
-test: lint test-unit
+build-pypi: clean
+	@echo
+	tox -e check_dist
+
+.PHONY: run run-*
+run:
+	@echo
+
+run-docker:
+	@echo
+	docker run --rm "${DOCKER_IMAGE_COMMIT}"
+
+.PHONY: lint test test-* tox
+test: tox
+lint:
+	@echo
+	@echo -- Lint --
+	tox -p -e flake8
 
 test-unit:
-	@echo
-	@echo -- Unit Test --
-	python3 -m pytest --cov-report term-missing --cov=${MODULE} tests/
+	pytest tests/
 
 test-docker:
 	@echo
-	@echo -- Running Docker Test --
-	docker run --rm ${DOCKER_IMAGE_LATEST} test
 
-.PHONY: publish publish-staging publish-*
-publish: docker-login
+tox:
+	@echo
+	TOX_PARALLEL_NO_SPINNER=1 tox -p --recreate
+
+.PHONY: publish-*
+publish-docker:
 	docker push ${DOCKER_IMAGE_COMMIT}
-	docker push ${DOCKER_IMAGE}
+	docker push ${DOCKER_IMAGE_DESCRIBE}
 
-publish-staging: publish
-	docker tag ${DOCKER_IMAGE_LATEST} ${DOCKER_IMAGE_STAGING}
-	docker push ${DOCKER_IMAGE_STAGING}
-
-publish-release: publish
-	docker tag ${DOCKER_IMAGE_LATEST} ${DOCKER_IMAGE_PRODUCTION}
-	docker push ${DOCKER_IMAGE_PRODUCTION}
+publish-pypi:
+	@echo
+	@echo Publishing wheel
+	python3 -m twine upload dist/*
