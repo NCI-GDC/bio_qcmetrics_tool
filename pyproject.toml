@@ -34,8 +34,9 @@ dev = [
 ]
 
 test = [
-    "coverage[toml]",
+    "coverage",
     "pytest",
+    "attrs",
 ]
 
 [project.urls]
