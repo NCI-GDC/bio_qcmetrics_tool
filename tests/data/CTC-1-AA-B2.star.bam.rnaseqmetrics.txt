@@ -111,4 +111,3 @@ normalized_position	All_Reads.normalized_coverage	CTC-1-AA-B2.normalized_coverag
 98	0.602431	0.602431
 99	0.546961	0.546961
 100	0.494722	0.494722
-
