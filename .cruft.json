@@ -1,0 +1,20 @@
+{
+    "template": "git@github.com:NCI-GDC/bio-python-template.git",
+    "commit": "76bb157a5a6d808b6a0a072d54303a61a953aa39",
+    "context": {
+      "cookiecutter": {
+        "full_name": "Charles Czysz",
+        "email": "czysz@uchicago.edu",
+        "github_username": "czyszCTDS",
+        "project_name": "bio_qcmetrics_tool",
+        "package_name": "bio_qcmetrics_tool",
+        "project_short_description": "Python Boilerplate contains all the boilerplate you need to create a Python package.",
+        "min_python_version": "3.11",
+        "github_repo": "https://github.com/NCI-GDC/bio_qcmetrics_tool",
+        "commit": "76bb157a5a6d808b6a0a072d54303a61a953aa39",
+        "_template": "git@github.com:NCI-GDC/bio-python-template.git"
+      }
+    },
+    "directory": null,
+    "checkout": null
+  }

@@ -1,15 +1,25 @@
-FROM python:3.5-stretch
+ARG REGISTRY=docker.osdc.io
+ARG BASE_CONTAINER_VERSION=2.0.1
 
-MAINTAINER Kyle Hernandez <kmhernan@uchicago.edu>
+FROM ${REGISTRY}/ncigdc/python3.11-builder:${BASE_CONTAINER_VERSION} as builder
 
-COPY ./dist /opt
+COPY ./ /opt
 
 WORKDIR /opt
 
-RUN make init-pip \
-  && ln -s /opt/bin/bio_qcmetrics_tool /bin/bio_qcmetrics_tool
+RUN pip install tox && tox -e build
 
+FROM ${REGISTRY}/ncigdc/python3.11:${BASE_CONTAINER_VERSION}
 
-ENTRYPOINT ["/bin/bio_qcmetrics_tool"]
+COPY --from=builder /opt/dist/*.whl /opt/
+COPY requirements.txt /opt/
+
+WORKDIR /opt
+
+RUN pip install --no-deps -r requirements.txt \
+	&& pip install --no-deps *.whl \
+	&& rm -f *.whl requirements.txt
+
+ENTRYPOINT ["bio_qcmetrics_tool"]
 
 CMD ["--help"]

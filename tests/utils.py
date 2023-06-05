@@ -1,7 +1,7 @@
-import sys
 import os
-from io import StringIO
+import sys
 from contextlib import contextmanager
+from io import StringIO
 
 from bio_qcmetrics_tool.utils.logger import Logger
 

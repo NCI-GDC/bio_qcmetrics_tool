@@ -1,11 +1,10 @@
 """Extract readgroup information"""
-import os
 import json
-import zipfile
-import pandas as pd
+import os
 import sqlite3
 
-from bio_qcmetrics_tool.utils.parse import parse_type
+import pandas as pd
+
 from bio_qcmetrics_tool.modules.base import ExportQcModule
 from bio_qcmetrics_tool.modules.exceptions import DuplicateInputException
 

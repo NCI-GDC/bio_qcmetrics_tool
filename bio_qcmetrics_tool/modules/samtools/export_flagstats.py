@@ -9,18 +9,18 @@ Some of the file-parsing logic is adapted from:
     PMID: 27312411
     https://github.com/ewels/MultiQC
 """
-import json
 import os
 import re
-import pandas as pd
 import sqlite3
 
-from bio_qcmetrics_tool.utils.parse import parse_type, get_read_func
+import pandas as pd
+
 from bio_qcmetrics_tool.modules.base import ExportQcModule
 from bio_qcmetrics_tool.modules.exceptions import (
     DuplicateInputException,
     ParserException,
 )
+from bio_qcmetrics_tool.utils.parse import get_read_func
 
 
 class ExportSamtoolsFlagstats(ExportQcModule):
