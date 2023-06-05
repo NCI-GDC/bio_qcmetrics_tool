@@ -18,8 +18,6 @@ variables:
 
 tox:
   image: ${BASE_CONTAINER_REGISTRY}/${REPO_PY_VERSION}-builder:${BASE_CONTAINER_VERSION}
-  before_script:
-    - mkdir -p /usr/share/man/man1
 
 release:
   image: ${BASE_CONTAINER_REGISTRY}/${REPO_PY_VERSION}-builder:${BASE_CONTAINER_VERSION}
