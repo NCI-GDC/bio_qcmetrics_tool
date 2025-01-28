@@ -20,6 +20,4 @@ RUN pip install --no-deps -r requirements.txt \
 	&& pip install --no-deps *.whl \
 	&& rm -f *.whl requirements.txt
 
-ENTRYPOINT ["bio_qcmetrics_tool"]
-
-CMD ["--help"]
+CMD ["bio_qcmetrics_tool --help"]
