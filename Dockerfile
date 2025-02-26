@@ -1,7 +1,7 @@
 ARG REGISTRY=docker.osdc.io
 ARG BASE_CONTAINER_VERSION=2.0.1
 
-FROM ${REGISTRY}/ncigdc/python3.11-builder:${BASE_CONTAINER_VERSION} as builder
+FROM ${REGISTRY}/ncigdc/python3.8-builder:${BASE_CONTAINER_VERSION} as builder
 
 COPY ./ /opt
 
@@ -9,7 +9,7 @@ WORKDIR /opt
 
 RUN pip install tox && tox -e build
 
-FROM ${REGISTRY}/ncigdc/python3.11:${BASE_CONTAINER_VERSION}
+FROM ${REGISTRY}/ncigdc/python3.8:${BASE_CONTAINER_VERSION}
 
 COPY --from=builder /opt/dist/*.whl /opt/
 COPY requirements.txt /opt/
