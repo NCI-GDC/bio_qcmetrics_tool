@@ -3,7 +3,6 @@ import argparse
 import importlib
 import inspect
 import pkgutil
-import sys
 from signal import SIG_DFL, SIGPIPE, signal
 
 from bio_qcmetrics_tool.utils.logger import Logger

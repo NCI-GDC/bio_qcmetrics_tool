@@ -11,7 +11,6 @@ Some of the file-parsing logic is adapted from:
 
 """
 
-import json
 import os
 import sqlite3
 

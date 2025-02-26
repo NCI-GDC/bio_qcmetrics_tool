@@ -2,9 +2,7 @@
 @author Lauren Mogil <lmogil@uchicag.edu>
 """
 import csv
-import json
 import os
-import re
 import sqlite3
 
 import pandas as pd
@@ -14,7 +12,6 @@ from bio_qcmetrics_tool.modules.exceptions import (
     DuplicateInputException,
     ParserException,
 )
-from bio_qcmetrics_tool.utils.parse import get_read_func, parse_type
 
 
 class ExportTenXScrnaMetrics(ExportQcModule):

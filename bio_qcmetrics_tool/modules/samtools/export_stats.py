@@ -10,19 +10,17 @@ Some of the file-parsing logic is adapted from:
     https://github.com/ewels/MultiQC
 
 """
-import json
 import os
-import re
 import sqlite3
 
 import pandas as pd
 
 from bio_qcmetrics_tool.modules.base import ExportQcModule
-from bio_qcmetrics_tool.modules.exceptions import (
+from bio_qcmetrics_tool.modules.exceptions import (  # noqa: F401
     DuplicateInputException,
     ParserException,
 )
-from bio_qcmetrics_tool.utils.parse import get_read_func, parse_type
+from bio_qcmetrics_tool.utils.parse import get_read_func
 
 
 class ExportSamtoolsStats(ExportQcModule):

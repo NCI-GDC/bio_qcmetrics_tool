@@ -10,7 +10,7 @@ from bio_qcmetrics_tool.modules.picard.metrics.base import (
     PICARD_METRICS_OBJECTS,
     PicardMetric,
 )
-from tests.utils import (
+from tests.utils import (  # noqa: F401
     captured_output,
     cleanup_files,
     get_table_list,
@@ -100,7 +100,7 @@ class TestExportPicardMetrics(unittest.TestCase):
             self.assertTrue(os.path.isfile(fn))
             res = os.stat(fn)
             self.assertTrue(res.st_size > 1000)
-            with sqlite3.connect(fn) as conn:
+            with sqlite3.connect(fn) as conn:  # noqa: F841
                 pass
         finally:
             cleanup_files(fn)
