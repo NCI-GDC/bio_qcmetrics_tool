@@ -57,7 +57,7 @@ branch = true
 parallel = true
 
 [tool.flit.module]
-name = "bio-qcmetrics-tool"
+name = "bio_qcmetrics_tool"
 
 [tool.flit.sdist]
 include = ["bio_qcmetrics_tool/_version.py"]

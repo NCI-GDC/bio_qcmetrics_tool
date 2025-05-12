@@ -1,6 +1,6 @@
-REPO = bio-qcmetrics-tool
+REPO = bio_qcmetrics_tool
 
-MODULE = bio-qcmetrics-tool
+MODULE = bio_qcmetrics_tool
 
 # Redirect error when run in container
 COMMIT_HASH:=$(shell git rev-parse HEAD 2>/dev/null)
