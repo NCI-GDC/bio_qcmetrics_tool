@@ -9,7 +9,7 @@ WORKDIR /opt
 
 RUN pip install tox && tox -e build
 
-FROM ${REGISTRY}/ncigdc/python3.8:${BASE_CONTAINER_VERSION}
+FROM ${REGISTRY}/ncigdc/python3.11:${BASE_CONTAINER_VERSION}
 
 COPY --from=builder /opt/dist/*.whl /opt/
 COPY requirements.txt /opt/
