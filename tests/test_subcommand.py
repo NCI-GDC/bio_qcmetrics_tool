@@ -75,6 +75,7 @@ class TestExportQcModule(unittest.TestCase):
         TestExportQcModule.Example.add(subparsers=sp)
         with self.assertRaises(SystemExit), captured_output() as (_, _):
             opts = parser.parse_args(["example"])
+            assert opts
 
     def test_add_full(self):
         parser = argparse.ArgumentParser()
@@ -84,5 +85,6 @@ class TestExportQcModule(unittest.TestCase):
             opts = parser.parse_args(
                 ["example", "--export_format", "sqlite", "-o", ":memory:"]
             )
+            assert opts
 
         self.assertEqual(stderr.getvalue().rstrip("\r\n"), "")

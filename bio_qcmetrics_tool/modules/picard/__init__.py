@@ -1,3 +1,3 @@
-from __future__ import absolute_import
+from __future__ import absolute_import  # noqa: F401
 
-from .export_picard import ExportPicardMetrics
+from .export_picard import ExportPicardMetrics  # noqa: F401

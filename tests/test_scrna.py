@@ -1,12 +1,9 @@
 """Tests for `bio_qcmetrics_tool.modules.samtools`"""
-import math
 import sqlite3
 import tempfile
 import unittest
 
-import pandas as pd
-
-from bio_qcmetrics_tool.modules.exceptions import ParserException
+from bio_qcmetrics_tool.modules.exceptions import ParserException  # noqa: F401
 from bio_qcmetrics_tool.modules.scrna import ExportTenXScrnaMetrics
 from tests.utils import cleanup_files, get_table_list, get_test_data_path
 
@@ -43,7 +40,6 @@ class TestExportScrnaMetrics(unittest.TestCase):
     def test__parse_scrnametrics(self):
         obj = ExportTenXScrnaMetrics(options={})
         ifil = get_test_data_path("scrna.metrics.csv")
-        rec = None
         with open(ifil, "r") as fh:
             res = obj._parse_scrnametrics(fh)
             exp = self.gen_results()
