@@ -113,3 +113,7 @@ test-reports/
 # Gitlab CI - automatically created, break flit validation
 vars.env
 gl-code-quality-report.html
+
+#wheel fix
+gl-sast-report.json
+gl-secret-detection-report.json
